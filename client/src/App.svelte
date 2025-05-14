@@ -3,6 +3,7 @@
     import Home from "./pages/Home/Home.svelte";
     import Dashboard from "./pages/Dashboard/Dashboard.svelte";
     import About from "./pages/About/About.svelte";
+    import FruitsNVeggies from "./pages/FruitsNVeggies/FruitsNVeggies.svelte";
 
     import NavBar from "./components/NavBar.svelte";
     import FlipCard from "./components/FlipCard.svelte";
@@ -35,6 +36,8 @@
         <Route path="/login"><FlipCard/></Route>
         <Route path="/forgot-password"><ForgotPassword/></Route>
         <Route path="/reset-password"><ResetPassword/></Route>
+        <Route path="/add-health"><FruitsNVeggies /></Route>
+
 
     </div>
 

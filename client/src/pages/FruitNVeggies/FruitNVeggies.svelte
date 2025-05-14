@@ -1,1 +1,0 @@
-<h1>Fruit 'N Veggies</h1>

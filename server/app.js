@@ -27,7 +27,7 @@ import protectedRouter from './routers/protectedRouter.js';
 app.use('/api/protected', protectedRouter);
 
 import pagesRouter from './routers/pagesRouter.js';
-app.use('/api/fruits', pagesRouter)
+app.use('/api', pagesRouter)
 
 
 
