@@ -34,13 +34,13 @@ async function setupDB() {
     );
 
     await db.run(`INSERT INTO fruits (name, image_url) VALUES 
-        ('Banana', 'https://via.placeholder.com/100?text=Banana'),
-        ('Apple', 'https://via.placeholder.com/100?text=Apple')
+        ('Banana', '/images/fruitsPic/banans.png'),
+        ('Kiwi', '/images/fruitsPic/kiwis.png')
     `);
 
     await db.run(`INSERT INTO vegetables (name, image_url) VALUES 
-        ('Carrot', 'https://via.placeholder.com/100?text=Carrot'),
-        ('Broccoli', 'https://via.placeholder.com/100?text=Broccoli')
+        ('Pepper', '/images/veggiesPic/peppers.png'),
+        ('Broccoli', '/images/veggiesPic/broccolis.png')
     `);
 
     console.log("DB setup complete!");

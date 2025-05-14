@@ -3,44 +3,22 @@
     import { onMount } from "svelte";
     import { fetchGet } from "../../utils/fetch.js";
 
-    let fruits = [
-        {
-            id: 1,
-            name: "Apple",
-            image_url: "https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg"
-        },
-        {
-            id: 2,
-            name: "Banana",
-            image_url: "https://upload.wikimedia.org/wikipedia/commons/8/8a/Banana-Single.jpg"
-        }
-    ];
 
-    let veggies = [
-        {
-            id: 3,
-            name: "Carrot",
-            image_url: "https://upload.wikimedia.org/wikipedia/commons/7/70/Carrot.jpg"
-        },
-        {
-            id: 4,
-            name: "Broccoli",
-            image_url: "https://upload.wikimedia.org/wikipedia/commons/0/03/Broccoli_and_cross_section_edit.jpg"
-        }
-    ];
-
-    // let fruits = [];
-    // let veggies = [];
+    let fruits = [];
+    let veggies = [];
 
     let selectedFoods = new Set();
 
-    // onMount(async () => {
-    //     const fruitData = await fetchGet('/api/fruits');
-    //     const veggieData = await fetchGet('/api/vegestable');
+    onMount(async () => {
+        const fruitData = await fetchGet('/api/fruits');
+        const veggieData = await fetchGet('/api/vegetables');
 
-    //     fruits = fruitData.data;
-    //     veggies = veggieData.data;
-    // });
+        fruits = fruitData.data;
+        veggies = veggieData.data;
+
+        console.log("fruits:", fruits);
+        console.log("veggies:", veggies);
+    });
 
     function toggleFood(food) {
         if (selectedFoods.has(food.id)) {

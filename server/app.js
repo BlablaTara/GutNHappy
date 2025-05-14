@@ -1,3 +1,4 @@
+import dotenv from 'dotenv/config';
 import express from 'express';
 const app = express();
 
@@ -7,7 +8,9 @@ app.use(express.json());
 import path from 'path';
 app.use(express.static(path.resolve('../client/dist/')));
 
-import dotenv from 'dotenv/config';
+app.use('/images', express.static(path.resolve('../client/public/images')));
+
+
 console.log(process.env.SESSION_KEY);
 
 
@@ -31,8 +34,12 @@ app.use('/api', pagesRouter)
 
 
 
-app.get("/{*splat}", (req, res) => {
-    res.sendFile(path.resolve('../client/dist/index.html'));
+// app.get("/{*splat}", (req, res) => {
+//     res.sendFile(path.resolve('../client/dist/index.html'));
+// });
+
+app.use((req, res, next) => {
+  res.sendFile(path.resolve("client/dist/index.html"));
 });
 
 

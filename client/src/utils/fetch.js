@@ -19,9 +19,15 @@ export async function fetchGet(url) {
         }
 
         if (contentType && contentType.includes("application/json")) {
-            return await response.json();
+            //return await response.json();
+            const json = await response.json(); // log
+            console.log(" Successful fetch GET response:", json); // log
+            return json;// log
         } else {
-            return await response.text();
+            //return await response.text();
+            const text = await response.text(); // log
+            console.log(" Successful fetch GET text response:", text); // log
+            return { data: text };// log
         }
 
     } catch (error) {
