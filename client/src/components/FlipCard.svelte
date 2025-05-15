@@ -19,7 +19,7 @@
 
   let isFlipped = false;
 
-  let loginData = { email: "", password: "" };
+  let loginData = { email: "bent@bent.dk", password: "" };
   let signupData = { name: "", email: "", password: "", confirmPassword: "" };
   let error = "";
 

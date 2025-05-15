@@ -6,17 +6,6 @@
 
     let name = '';
 
-    // onMount(async () => {
-    //     console.log("Dashboardroute Mountet");
-    //     try {
-    //         const res = await fetchGet("/api/protected/user-status");
-    //         name = res.user?.name || 'Guest';
-    //     } catch (error) {
-    //         console.log("Can't get name: ", error);
-            
-    //     }
-    // });
-
     $: name = $authStore.user ? $authStore.user.name : "";
 
     
