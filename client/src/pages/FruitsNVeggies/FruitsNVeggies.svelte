@@ -10,6 +10,7 @@
     let selectedFoods = new Set();
 
     onMount(async () => {
+        console.log("Fruits N Veggies route Mountet");
         const fruitData = await fetchGet('/api/fruits');
         const veggieData = await fetchGet('/api/vegetables');
 

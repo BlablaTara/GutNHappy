@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
 
   onMount(() => {
+    console.log("FlipCard route Mountet");
     const params = new URLSearchParams(window.location.search);
     if (params.get("reset") === "1") {
       toastr.options = {

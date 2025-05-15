@@ -3,19 +3,23 @@
     import { Link, useLocation } from 'svelte-routing';
     import { fetchGet } from '../utils/fetch.js';
     import { logout } from '../utils/logout.js';
-    import { isLoggedIn } from '../stores/auth.js';
+    import { authStore } from '../stores/authStore.js';
 
     const location = useLocation();
-    //let isLoggedIn = false;
 
     onMount(async () => {
-        const result = await fetchGet("/api/user-status");
-        isLoggedIn.set(!!result.isLoggedIn);
+        console.log("NavBar route Mountet");
+        const result = await fetchGet("/api/protected/user-status");
+        if (result.error || !result.isLoggedIn) {
+            authStore.set({ isLoggedIn: false, user: null, loading: false });
+        } else {
+            authStore.set({ isLoggedIn: true, user: result.user, loading: false });
+        }
     });
 
     async function handleLogout() {
         await logout();
-        isLoggedIn.set(false);
+        authStore.set({ isLoggedIn: false, user: null, loading: false})
     }
 
 </script>
@@ -27,7 +31,7 @@
         </Link>
     </div>
     <div  class="navbar-right">
-        {#if $isLoggedIn}
+        {#if $authStore.isLoggedIn}
          <Link to="/dashboard">Dashboard</Link>
          <button on:click={handleLogout}>Logout</button>
         {:else if $location.pathname === '/' || $location.pathname === '/login' || $location.pathname === '/about'}
