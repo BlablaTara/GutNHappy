@@ -12,10 +12,10 @@
             toastr.error(res.error);
         } else {
             toastr.success('Reset link sent to your email');
-            //toastr.info("Check spam")
+            toastr.info("Check spam")
             setTimeout(() => {
                 window.location.href = "/login?reset=1";
-            }, 2000); //gør at den venter 2 sekunder så brugeren når at se toasteren
+            }, 2000);
             
 
         }

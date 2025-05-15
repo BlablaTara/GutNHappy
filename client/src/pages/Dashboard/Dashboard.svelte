@@ -1,13 +1,10 @@
 <script>
-    import { onMount } from "svelte";
-    import { fetchGet} from "../../utils/fetch.js";
     import { authStore } from "../../stores/authStore.js";
     import { logout } from "../../utils/logout.js";
 
     let name = '';
 
     $: name = $authStore.user ? $authStore.user.name : "";
-
     
 </script>
 

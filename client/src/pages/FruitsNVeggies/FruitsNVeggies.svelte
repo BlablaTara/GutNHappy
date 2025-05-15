@@ -3,7 +3,6 @@
     import { onMount } from "svelte";
     import { fetchGet } from "../../utils/fetch.js";
 
-
     let fruits = [];
     let veggies = [];
 
@@ -39,7 +38,6 @@
     <FoodBox food={fruit} selected={selectedFoods.has(fruit.id)} onToggle={toggleFood} />
     {/each}    
 </div>
-
 
 <h2>Veggies</h2>
 <div class="grid">

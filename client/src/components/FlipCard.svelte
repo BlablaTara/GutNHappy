@@ -40,7 +40,7 @@
       toastr.success("Login successful! - redirecting...");
       setTimeout(() => {
         window.location.href = "/dashboard";
-      }, 1500); //venter 2 sek med at skifte.
+      }, 1500);
     }
   }
 
@@ -51,13 +51,6 @@
       error = "Passwords do not match."; //Rød respons
       return;
     }
-
-    console.log("Signup data being sent:", {
-      //log
-      name: signupData.name,
-      email: signupData.email,
-      password: signupData.password,
-    });
 
     try {
       const response = await fetchPost("/api/signup", {
@@ -73,7 +66,7 @@
         toastr.success("Signup successful! - redirecting...");
         setTimeout(() => {
           window.location.href = "/login";
-        }, 1500); //venter 2 sek med at skifte.
+        }, 1500);
       }
     } catch {
       toastr.error("Signup failed. Please try again.");
