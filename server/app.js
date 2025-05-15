@@ -33,16 +33,6 @@ import pagesRouter from './routers/pagesRouter.js';
 app.use('/api', pagesRouter)
 
 
-
-// app.get("/{*splat}", (req, res) => {
-//     res.sendFile(path.resolve('../client/dist/index.html'));
-// });
-
-app.use((req, res, next) => {
-  res.sendFile(path.resolve("client/dist/index.html"));
-});
-
-
 const PORT = 8080;
 app.listen(PORT, () => console.log("Server is running on: ", PORT)
 );

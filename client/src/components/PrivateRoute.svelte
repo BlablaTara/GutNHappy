@@ -1,20 +1,35 @@
 <script>
     import { onMount } from "svelte";
     import { navigate } from "svelte-routing";
+    import { fetchGet } from "../utils/fetch";
 
     export let component;
     let isAuthenticated = false;
     let loading = true;
 
+
     onMount(async () => {
-        const res = await fetch("/api/protected");
-        isAuthenticated = res.ok;
+        const result = await fetchGet("/api/user-status");
+
+        if (result.error || !result.isLoggedIn) {
+            isAuthenticated = false;
+            navigate("/login");
+        } else {
+            isAuthenticated = true;
+        }
         loading = false;
 
-        if (!isAuthenticated) {
-            navigate("/login");
-        }
     });
+
+    // onMount(async () => {
+    //     const res = await fetch("/api/protected");
+    //     isAuthenticated = res.ok;
+    //     loading = false;
+
+    //     if (!isAuthenticated) {
+    //         navigate("/login");
+    //     }
+    // });
 </script>
 
 {#if loading}

@@ -7,8 +7,8 @@
 
     onMount(async () => {
         try {
-            const res = await fetchGet("/api/protected");
-            name = res.name;
+            const res = await fetchGet("/api/protected/user-status");
+            name = res.user?.name || 'Guest';
         } catch (error) {
             console.log("Can't get name: ", error);
             

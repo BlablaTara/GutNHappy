@@ -1,5 +1,5 @@
 <script>
-    import { fetchGet, fetchPost } from "../utils/fetch.js";
+    import { fetchPost } from "../utils/fetch.js";
     import toastr from "toastr";
 
 
