@@ -46,29 +46,32 @@
     };
 
     async function updateData() {
-  const result = await fetchGet('/api/protected/user-weekly-selections');
+        const result = await fetchGet('/api/protected/user-weekly-selections');
 
-  if (result.error) {
-    console.error("Error getting weekly data:", result.error);
-    return;
-  }
+        if (result.error) {
+            console.error("Error getting weekly data:", result.error);
+            return;
+        }
 
-  const weeklyArray = result.data;
+        const weeklyArray = result.data;
 
-  summary = weeklyArray;
+        summary = weeklyArray;
 
-  chartData.labels = weeklyArray.map(entry => entry.week);
-  chartData.datasets[0].data = weeklyArray.map(entry => entry.fruits);
-  chartData.datasets[1].data = weeklyArray.map(entry => entry.veggies);
+        chartData.labels = weeklyArray.map(entry => entry.week);
+        chartData.datasets[0].data = weeklyArray.map(entry => entry.fruits);
+        chartData.datasets[1].data = weeklyArray.map(entry => entry.veggies);
 
-  totalFruits = weeklyArray.reduce((sum, e) => sum + e.fruits, 0);
-  totalVeggies = weeklyArray.reduce((sum, e) => sum + e.veggies, 0);
+        //Array sorteret fra ældste til nyeste uge
+        const latestWeek = weeklyArray[weeklyArray.length - 1] || { fruits: 0, veggies: 0 };
 
-  if (chart) {
-    chart.data = chartData;
-    chart.update();
-  }
-}
+        totalFruits = latestWeek.fruits;
+        totalVeggies = latestWeek.veggies;
+
+        if (chart) {
+            chart.data = chartData;
+            chart.update();
+        }
+    }
 
     onMount(() => {
     chart = new Chart(canvas, {
@@ -97,10 +100,10 @@
     <h2>Your weekly healt status</h2>
 
     <div class="progress-container">
-        <div class="fruit-bar" style="width: {(totalFruits / 20) * 100}%"></div>
-        <div class="veggie-bar" style="width: {(totalVeggies / 20) * 100}%"></div>
+        <div class="fruit-bar" style="width: {(totalFruits / total) * progress}%"></div>
+        <div class="veggie-bar" style="width: {(totalVeggies / total) * progress}%"></div>
     </div>
-    <p>{total} out of your weekly goal of 20 different ({totalFruits}) fruits, and ({totalVeggies}) veggies</p>
+    <p>{total} out of your weekly goal of 20 different (fruits: {totalFruits}, veggies: {totalVeggies})</p>
 
     <h2>Your intake the last 12 weeks</h2>
     <div class="chart-container">
@@ -110,6 +113,8 @@
 
 <style>
     .progress-container {
+        display: flex;
+
         height: 30px;
         background: #e0e0e0;
         border-radius: 20px;
