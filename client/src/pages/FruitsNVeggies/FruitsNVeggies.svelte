@@ -39,7 +39,7 @@
     async function loadUserSelections() {
         try {
             const today = new Date().toISOString().split('T')[0];
-            const selections = await fetchGet(`/pi/user-selections?date=${today}`);
+            const selections = await fetchGet(`/api/user-selections?date=${today}`);
 
             if (!selections.error && selections.success) {
                 //opdaterer vores lokle ayyay med brugerens tidligere valg.

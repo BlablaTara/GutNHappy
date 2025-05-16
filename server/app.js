@@ -28,7 +28,10 @@ import protectedRouter from "./routers/protectedRouter.js";
 app.use("/api/protected", protectedRouter);
 
 import fruitsNVeggiesRouter from "./routers/fruitsNVeggiesRouter.js"
-app.use("/api", fruitsNVeggiesRouter)
+app.use("/api/protected", fruitsNVeggiesRouter)
+
+import dashboardRouter from "./routers/dashboardRouter.js"
+app.use("/api/protected", dashboardRouter)
 
 const PORT = 8080;
 app.listen(PORT, () => console.log("Server is running on: ", PORT));
