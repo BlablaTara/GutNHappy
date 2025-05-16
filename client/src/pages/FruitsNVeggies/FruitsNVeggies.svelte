@@ -2,10 +2,9 @@
     import FoodBox from "../../components/FoodBox.svelte";
     import { onMount } from "svelte";
     import { authStore } from "../../stores/authStore.js";
-    import { fetchGet } from "../../utils/fetch.js";
+    import { fetchGet, fetchPost } from "../../utils/fetch.js";
 
     let name = '';
-
     $: name = $authStore.user ? $authStore.user.name : "";
 
     let fruits = [];
@@ -14,14 +13,46 @@
     let selectedFruitIds = [];
     let selectedVeggieIds = [];
 
+    let isSaving = false;
+    let saveMessage = ""; //virkelig denne?? måske ikke
+    let saveError = ""; // og denne behøves måske heller ikke. og eller error som den adnen
+
     onMount(async () => {
         console.log("Fruits N Veggies route Mountet");
-        const fruitData = await fetchGet('/api/fruits');
-        const veggieData = await fetchGet('/api/vegetables');
-
-        fruits = fruitData.data;
-        veggies = veggieData.data;
+        await Promise.all([loadFruits(), loadVeggies(), loadUserSelections()]);
     });
+
+    async function loadFruits() {
+        const fruitData = await fetchGet('/api/fruits');
+        if (!fruitData.error) {
+            fruits = fruitData.data;
+        }
+    }
+
+    async function loadVeggies() {
+        const veggieData = await fetchGet('/api/vegetables');
+        if (!veggieData.error) {
+            veggies = veggieData.data;
+        }
+    }
+
+    async function loadUserSelections() {
+        try {
+            const today = new Date().toISOString().split('T')[0];
+            const selections = await fetchGet(`/pi/user-selections?date=${today}`);
+
+            if (!selections.error && selections.success) {
+                //opdaterer vores lokle ayyay med brugerens tidligere valg.
+                selectedFruitIds = selections.data.fruits.map(fruit => fruit.id);
+                selectedVeggieIds = selections.data.vegetables.map(veg => veg.id);
+            }
+        } catch (error) {
+            console.log("Couln't read the users earlier choices:", error);
+            
+        }
+        
+    }    
+    
 
     function toggleFruit(fruit) {
         if (selectedFruitIds.includes(fruit.id)) {
@@ -40,9 +71,71 @@
         }
         console.log("Selected veggies:", selectedVeggieIds);
     }
+
+    async function saveSelections() {
+        try {
+            isSaving = true;
+            saveMessage = "";
+            saveError = "";
+            
+            if (!$authStore.isLoggedIn) {
+                saveError = "Du skal være logget ind for at gemme dine valg";
+                return;
+            }
+            
+            const today = new Date().toISOString().split('T')[0];
+            
+            const result = await fetchPost('/api/save-selections', {
+                fruitIds: selectedFruitIds,
+                veggieIds: selectedVeggieIds,
+                date: today
+            });
+            
+            if (result.error) {
+                saveError = result.message || "Der opstod en fejl ved gemning af dine valg";
+            } else {
+                saveMessage = result.message || "Dine valg er blevet gemt";
+                const total = result.data.totalCount;
+                const target = 20;
+                
+                if (total >= target) {
+                    saveMessage += ` Tillykke! Du har nået målet på ${target} forskellige frugt og grønt i dag!`;
+                } else {
+                    saveMessage += ` Du har valgt ${total} ud af ${target} forskellige frugt og grønt i dag.`;
+                }
+            }
+        } catch (error) {
+            console.error("Fejl ved gemning:", error);
+            saveError = "Der opstod en uventet fejl";
+        } finally {
+            isSaving = false;
+            
+            // Fade ud besked efter 5 sekunder
+            if (saveMessage) {
+                setTimeout(() => {
+                    saveMessage = "";
+                }, 5000);
+            }
+        }
+    }
 </script>
 
 <h1>Fruits 'N Veggies</h1>
+<p>Choose the fruits and greens you ate today.</p>
+
+{#if saveMessage}
+    <div class="success-message">
+        {saveMessage}
+    </div>
+{/if}
+
+{#if saveError}
+    <div class="error-message">
+        {saveError}
+    </div>
+{/if}
+
+
 
 <h2>Fruits</h2>
 <div class="grid">
@@ -66,10 +159,68 @@
     {/each}
 </div>
 
+<div class="save">
+    <button class="save-button" on:click={saveSelections} disabled={isSaving}>
+        {isSaving ? 'Saving...' : 'Save my choices'}
+    </button>
+    <p class="count-display">
+        Today you ate: {selectedFruitIds.length + selectedVeggieIds.length} different types of fruits and vegetables
+    </p>
+</div>
+
 <style>
     .grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .save {
+        margin-top: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .save-button {
+        padding: 0.75rem 1.5rem;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .save-button:hover {
+        background-color: #45a049;
+    }
+    
+    .save-button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+    
+    .count-display {
+        margin-top: 1rem;
+        font-size: 1.1rem;
+    }
+    
+    .success-message {
+        background-color: #DFF2BF;
+        color: #4F8A10;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+    }
+    
+    .error-message {
+        background-color: #FFBABA;
+        color: #D8000C;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 1rem;
     }
 </style>

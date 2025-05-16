@@ -2,15 +2,27 @@
 
 ## to setup the database be in the server-directory.
 
-Then run this:
+#DATABASE
+
+Setup db:
+$ cd server
 $ node utils/setupDB.js
+
+Data in db: 
+$ cd server
+$ node utils/seedDB.js
 
 ## to run the applikation local:
 
-cd client:
-$npm run build
+#FRONTEND:
 
+$ cd client
+$ npm run build
 $ npm run dev
 
-cd server:
+#BACKEND:
+
+$ cd server
 $ node/nodemon app.js
+
+

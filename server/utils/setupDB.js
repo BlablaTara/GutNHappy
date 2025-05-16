@@ -33,15 +33,41 @@ async function setupDB() {
         );`,
   );
 
-  await db.run(`INSERT INTO fruits (name, image_url) VALUES 
-        ('Banana', '/images/fruitsPic/banans.png'),
-        ('Kiwi', '/images/fruitsPic/kiwis.png')
-    `);
+  await db.exec(
+    `CREATE TABLE IF NOT EXISTS user_fruit_selections (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            fruit_id INTEGER NOT NULL,
+            selection_date DATE NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(email) ON DELETE CASCADE,
+            FOREIGN  KEY (fruit_id) REFERENCES fruits(id) ON DELETE CASCADE,
+            UNIQUE(user_id, fruit_id, selection_date)
+        );`
+  );
 
-  await db.run(`INSERT INTO vegetables (name, image_url) VALUES 
-        ('Pepper', '/images/veggiesPic/peppers.png'),
-        ('Broccoli', '/images/veggiesPic/broccolis.png')
-    `);
+  await db.exec(
+    `CREATE TABLE IF NOT EXISTS user_vegetable_selections (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            vegetable_id INTEGER NOT NULL,
+            selection_date DATE NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(email) ON DELETE CASCADE,
+            FOREIGN KEY (vegetable_id) REFERENCES vegetables(id) ON DELETE CASCADE,
+            UNIQUE(user_id, vegetable_id, selection_date)
+        );`
+  );
+
+
+  //MÅSKE, MÅSKE IKKE. RÅD FRA CHAT.
+  await db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_user_fruit_date ON user_fruit_selections(user_id, selection_date);`
+  );
+
+  await db.exec(
+    `CREATE INDEX IF NOT EXISTS idx_user_veggie_date ON user_vegetable_selections(user_id, selection_date);`
+  );
 
   console.log("DB setup complete!");
   await db.close();
