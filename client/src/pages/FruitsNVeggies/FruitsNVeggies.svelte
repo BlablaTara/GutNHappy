@@ -6,7 +6,7 @@
     let fruits = [];
     let veggies = [];
 
-    let selectedFoods = new Set();
+    let selectedFoods = new Map();
 
     onMount(async () => {
         console.log("Fruits N Veggies route Mountet");
@@ -16,16 +16,41 @@
         fruits = fruitData.data;
         veggies = veggieData.data;
 
-        console.log("fruits:", fruits);
-        console.log("veggies:", veggies);
+         // Tilføj bedre debug output
+        fruits.forEach(fruit => {
+            console.log(`Fruit ID: ${fruit.id}, Name: ${fruit.name}`);
+        });
+        
+        veggies.forEach(veg => {
+            console.log(`Veggie ID: ${veg.id}, Name: ${veg.name}`);
+        });
     });
 
     function toggleFood(food) {
-        if (selectedFoods.has(food.id)) {
-            selectedFoods.delete(food.id);
+        console.log("Toggling food:", food); //hvad sker der når vi toggler food?
+
+        const uniqueKey = `${food.type || 'unknown'}-${food.id}`;
+        console.log("Generated uniqueKey:", uniqueKey); //log
+
+        if (selectedFoods.has(uniqueKey)) {
+            console.log("Removing from selection"); //log
+            selectedFoods.delete(uniqueKey);
         } else {
-            selectedFoods.add(food.id);
+            console.log("Adding to selection"); //log
+            selectedFoods.set(uniqueKey, food);
         }
+        // Log hele selectedFoods efter opdatering
+        console.log("Updated selectedFoods:", [...selectedFoods.keys()]);
+
+        selectedFoods = selectedFoods;
+    }
+
+    function isSelected(food) {
+        const uniqueKey = `${food.type || 'unknown'}-${food.id}`;
+        const result = selectedFoods.has(uniqueKey);
+        // Uncommenter næste linje for ekstrem debug
+        console.log(`Checking if ${uniqueKey} is selected:`, result);
+        return result;
     }
 
 </script>
@@ -35,14 +60,14 @@
 <h2>Fruits</h2>
 <div class="grid">
     {#each fruits as fruit}
-    <FoodBox food={fruit} selected={selectedFoods.has(fruit.id)} onToggle={toggleFood} />
+    <FoodBox food={{...fruit, type: 'fruit'}} selected={isSelected({...fruit, type: 'fruit'})} onToggle={toggleFood} />
     {/each}    
 </div>
 
 <h2>Veggies</h2>
 <div class="grid">
     {#each veggies as veg}
-    <FoodBox food={veg} selected={selectedFoods.has(veg.id)} onToggle={toggleFood} />
+    <FoodBox food={{...veg, type: 'veggie'}} selected={isSelected({...veg, type: 'veggie'})} onToggle={toggleFood} />
     {/each}
 
 </div>
