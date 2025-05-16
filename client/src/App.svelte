@@ -1,5 +1,5 @@
 <script>
-    import { Router, Link, Route } from "svelte-routing";
+    import { Router, Route } from "svelte-routing";
     import Home from "./pages/Home/Home.svelte";
     import Dashboard from "./pages/Dashboard/Dashboard.svelte";
     import About from "./pages/About/About.svelte";
@@ -23,14 +23,18 @@
 
     <div>
         <Route path="/"><Home/></Route>
+        
         <Route path="/dashboard">
             <PrivateRoute component={Dashboard}/>
+        </Route>
+        <Route path="/add-health">
+            <PrivateRoute component={FruitsNVeggies}/>
         </Route>
         <Route path="/about"><About/></Route>
         <Route path="/login"><FlipCard/></Route>
         <Route path="/forgot-password"><ForgotPassword/></Route>
         <Route path="/reset-password"><ResetPassword/></Route>
-        <Route path="/add-health"><FruitsNVeggies /></Route>
+
 
 
     </div>

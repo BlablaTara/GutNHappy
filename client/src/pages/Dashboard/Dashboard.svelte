@@ -1,6 +1,5 @@
 <script>
     import { authStore } from "../../stores/authStore.js";
-    import { logout } from "../../utils/logout.js";
 
     let name = '';
 
@@ -11,5 +10,4 @@
 <div>
     <h1>Dashboard</h1>
     <p>Welcome {name}</p>
-    <button on:click={logout}>Log out</button>
 </div>

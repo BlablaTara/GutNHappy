@@ -33,11 +33,12 @@
     <div  class="navbar-right">
         {#if $authStore.isLoggedIn}
          <Link to="/dashboard">Dashboard</Link>
+         <Link to="/add-health">Add Health</Link>
          <button on:click={handleLogout}>Logout</button>
         {:else if $location.pathname === '/' || $location.pathname === '/login' || $location.pathname === '/about'}
             <Link to="/login">Login</Link>
             <Link to="/about">About</Link>
-            <Link to="/add-health">Add Health</Link>
+
 
         {/if}        
     </div>
