@@ -33,5 +33,5 @@
     "src/**/*.js",
     "src/**/*.svelte",
     "../server/utils/isUserLoggedIn.jsn.js../server/utils/isUserLoggedIn.jsgedIn.js"
-  ]
+, "src/pages/Leaderboard"  ]
 }

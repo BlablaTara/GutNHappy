@@ -8,9 +8,4 @@ router.get("/", isUserLoggedIn, (req, res) => {
   res.send({ isLogogedIn: req.session.user });
 });
 
-// router.get("/user-status", isUserLoggedIn, (req, res) => {
-//   console.log("User status called. Session:", req.session);
-//   res.send({ isLoggedIn: true, user: req.session.user });
-// });
-
 export default router;
