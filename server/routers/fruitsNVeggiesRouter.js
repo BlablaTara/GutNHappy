@@ -28,7 +28,11 @@ router.post("/save-selections", async (req, res) => {
 
     const selectionDate = date || new Date().toISOString().split('T')[0];
     const userId = req.session.user?.email;
-    console.log("User ID in session:", userId);
+    console.log("User ID in save session:", userId);
+
+    if (!userId) {
+      return res.status(400).send({ error: true, message: "User not authenticated" });
+    }
 
     const db = await getDB();
 
@@ -89,7 +93,7 @@ router.post("/save-selections", async (req, res) => {
 router.get("/user-selections", async (req, res) => {
   try {
     const userId = req.session.user?.email;
-    console.log("User ID in session:", userId);
+    console.log("User ID in selections session:", userId);
     const { date, startDate, endDate } = req.query;
 
     const db = await getDB();

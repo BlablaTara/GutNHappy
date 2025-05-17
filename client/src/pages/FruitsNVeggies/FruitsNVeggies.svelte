@@ -23,14 +23,14 @@
     });
 
     async function loadFruits() {
-        const fruitData = await fetchGet('/api/fruits');
+        const fruitData = await fetchGet('/api/protected/fruits');
         if (!fruitData.error) {
             fruits = fruitData.data;
         }
     }
 
     async function loadVeggies() {
-        const veggieData = await fetchGet('/api/vegetables');
+        const veggieData = await fetchGet('/api/protected/vegetables');
         if (!veggieData.error) {
             veggies = veggieData.data;
         }
@@ -39,7 +39,7 @@
     async function loadUserSelections() {
         try {
             const today = new Date().toISOString().split('T')[0];
-            const selections = await fetchGet(`/api/user-selections?date=${today}`);
+            const selections = await fetchGet(`/api/protected/user-selections?date=${today}`);
 
             if (!selections.error && selections.success) {
                 //opdaterer vores lokle ayyay med brugerens tidligere valg.
@@ -85,7 +85,7 @@
             
             const today = new Date().toISOString().split('T')[0];
             
-            const result = await fetchPost('/api/save-selections', {
+            const result = await fetchPost('/api/protected/save-selections', {
                 fruitIds: selectedFruitIds,
                 veggieIds: selectedVeggieIds,
                 date: today
