@@ -4,8 +4,8 @@
     import { authStore } from "../../stores/authStore.js";
     import { fetchGet, fetchPost } from "../../utils/fetch.js";
 
-    let name = '';
-    $: name = $authStore.user ? $authStore.user.name : "";
+    // let name = '';
+    // $: name = $authStore.user ? $authStore.user.name : "";
 
     let fruits = [];
     let veggies = [];
@@ -79,7 +79,7 @@
             saveError = "";
             
             if (!$authStore.isLoggedIn) {
-                saveError = "Du skal være logget ind for at gemme dine valg";
+                saveError = "You have to be logged";
                 return;
             }
             
@@ -92,14 +92,14 @@
             });
             
             if (result.error) {
-                saveError = result.message || "Der opstod en fejl ved gemning af dine valg";
+                saveError = result.message || "An error occured trying to save your choices";
             } else {
-                saveMessage = result.message || "Dine valg er blevet gemt";
+                saveMessage = result.message || "Your choices are saved";
                 const total = result.data.totalCount;
                 const target = 20;
                 
                 if (total >= target) {
-                    saveMessage += ` Tillykke! Du har nået målet på ${target} forskellige frugt og grønt i dag!`;
+                    saveMessage += ` Congratulations! You reached your goal on ${target} different fruits and veggies for this week!`;
                 } else {
                     saveMessage += ` Du har valgt ${total} ud af ${target} forskellige frugt og grønt i dag.`;
                 }

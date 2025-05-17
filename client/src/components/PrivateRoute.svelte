@@ -9,7 +9,7 @@
     onMount(async () => {
         console.log("Private route Mountet");
         
-        const result = await fetchGet("/api/protected/user-status");
+        const result = await fetchGet("/api/protected");
 
         if (result.error || !result.isLoggedIn) {
             authStore.set({ isLoggedIn: false, user: null, loading: false });

@@ -9,8 +9,8 @@
 
     onMount(async () => {
         console.log("NavBar route Mountet");
-        const result = await fetchGet("/api/protected/user-status");
-        if (result.error || !result.isLoggedIn) {
+        const result = await fetchGet("/api/protected");
+        if (result.error || !result.data) {
             authStore.set({ isLoggedIn: false, user: null, loading: false });
         } else {
             authStore.set({ isLoggedIn: true, user: result.user, loading: false });
