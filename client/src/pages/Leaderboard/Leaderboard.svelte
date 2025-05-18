@@ -4,21 +4,25 @@
     import UserProcess from "../../components/UserProcess.svelte";
     import { io } from "socket.io-client";
 
-    export let users = [];
+    let users = [];
     let socket;
 
-    $: sortedUsers = [...users].sort((a, b) => {
-        const totalA = a.fruitCount + a.veggieCount;
-        const totalB = b.fruitCount + b.veggieCount;
+    $: sortedUsers = Array.isArray(users) 
+        ? [...users].sort((a, b) => {
+            const totalA = a.totalFruits + a.totalVeggies;
+            const totalB = b.totalFruits + b.totalVeggies;
         return totalB - totalA;
     })
+    : [];
 
     async function getLeaderboard() {
         const result = await fetchGet("/api/protected/leaderboard")
-        if (result.success) {
+        if (result.success && Array.isArray(result.data)) {
             users = result.data;
+        } else {
+            users = [];
         }
-    }
+    };
 
     onMount(() => {
         socket = io("http://localhost:8080", {

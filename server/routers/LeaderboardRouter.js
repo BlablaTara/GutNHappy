@@ -4,10 +4,10 @@ import { getDB } from '../utils/db.js';
 const router = Router();
 
 router.get("/leaderboard", async (req, res) => {
-    const db = await getDB;
 
+    const db = await getDB();
     try {
-        const result = await db.call( 
+        const result = await db.all( 
            `
             SELECT 
                 u.name,
@@ -33,12 +33,9 @@ router.get("/leaderboard", async (req, res) => {
 
         res.send({ success: true, data: result });
     } catch (error) {
-        console.log("Error getting leaderbord data", error);
+        console.error("Error getting leaderbord data", error);
         res.status(500).send({ error: true, message: "Error getting leaderboard data"})
     }
-
-
-
 });
 
 export default router;
