@@ -3,6 +3,11 @@
     import { onMount } from "svelte";
     import { authStore } from "../../stores/authStore.js";
     import { fetchGet, fetchPost } from "../../utils/fetch.js";
+    import { io } from "socket.io-client";
+
+    const socket = io("http://localhost:8080", {
+        withCredentials: true
+    });
 
     // let name = '';
     // $: name = $authStore.user ? $authStore.user.name : "";
@@ -103,6 +108,12 @@
                 } else {
                     saveMessage += ` Du har valgt ${total} ud af ${target} forskellige frugt og grønt i dag.`;
                 }
+                
+                socket.emit("new-selection", {
+                    type: "weeklyUpdate",
+                    totalFruits: selectedFruitIds.length,
+                    totalVeggies: selectedVeggieIds.length
+                });
             }
         } catch (error) {
             console.error("Fejl ved gemning:", error);

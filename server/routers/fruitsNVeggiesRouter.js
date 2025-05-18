@@ -195,18 +195,6 @@ router.get("/user-selections", async (req, res) => {
       }
     });
 
-    // res.send({
-    //   success: true,
-    //   data: {
-    //     fruits: fruitSelections,
-    //     vegetables: veggieSelections,
-    //     totalUniqueItems: new Set([
-    //       ...fruitSelections.map(f => f.id),
-    //       ...veggieSelections.map(v => v.id)
-    //     ]).size
-    //   }
-    // });
-
   } catch (error) {
     console.error("Error finding users choice :", error);
     res.status(500).send({ error: true, message: "Sorry, an error occured, trying to get your choices." });

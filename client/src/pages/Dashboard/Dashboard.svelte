@@ -1,7 +1,8 @@
 <script>
-    import { onMount, onDestroy } from "svelte";
+    import { onMount, onDestroy, tick } from "svelte";
     import { authStore } from "../../stores/authStore.js";
     import { fetchGet } from "../../utils/fetch.js";
+    import UserProcess from "../../components/UserProcess.svelte";
 
     import Chart from 'chart.js/auto'
 
@@ -33,12 +34,7 @@
 
     let chartOptions = {
         responsive: true,
-        plugins: {
-            legend: {
-                position: "top"
-            }
-            
-        },
+        plugins: { legend: { position: "top" } },
         scales: {
             x: { stacked: true },
             y: { stacked: true, beginAtZero: true }
@@ -49,8 +45,8 @@
         const result = await fetchGet('/api/protected/user-weekly-selections');
 
         if (result.error) {
-            console.error("Error getting weekly data:", result.error);
-            return;
+            return console.error("Error getting weekly data:", result.error);
+
         }
 
         const weeklyArray = result.data;
@@ -73,14 +69,20 @@
         }
     }
 
-    onMount(() => {
-    chart = new Chart(canvas, {
-        type: 'bar',
-        data: chartData,
-        options: chartOptions
-    });
+    onMount(async () => {
+        await tick(); // venter til DOM er helt klar
 
-    updateData();
+        if (!canvas) {
+            console.log("Canvas-element not here"); //log som skal fjernes
+            return;
+        }
+
+        chart = new Chart(canvas, {
+            type: 'bar',
+            data: chartData,
+            options: chartOptions
+        });
+        updateData();
     });
 
     onDestroy(() => {
@@ -89,8 +91,8 @@
         }
     });
 
-    $: total = totalFruits + totalVeggies;
-    $: progress = Math.min((total / 20) * 100, 100);
+    // $: total = totalFruits + totalVeggies;
+    // $: progress = Math.min((total / 20) * 100, 100);
 </script>
 
 <div>
@@ -98,12 +100,8 @@
     <p>Welcome {name}</p>
 
     <h2>Your weekly healt status</h2>
-
-    <div class="progress-container">
-        <div class="fruit-bar" style="width: {(totalFruits / total) * progress}%"></div>
-        <div class="veggie-bar" style="width: {(totalVeggies / total) * progress}%"></div>
-    </div>
-    <p>{total} out of your weekly goal of 20 different (fruits: {totalFruits}, veggies: {totalVeggies})</p>
+    <UserProcess name={name} {totalFruits} {totalVeggies} />
+    <!-- <p>{total} out of your weekly goal of 20 different (fruits: {totalFruits}, veggies: {totalVeggies})</p> -->
 
     <h2>Your intake the last 12 weeks</h2>
     <div class="chart-container">
@@ -112,7 +110,7 @@
 </div>
 
 <style>
-    .progress-container {
+    /* .progress-container {
         display: flex;
 
         height: 30px;
@@ -130,7 +128,7 @@
     .veggie-bar {
         background-color: #66bb6a;
         height: 100%;
-    }
+    } */
 
     .chart-container {
         width: 100%;

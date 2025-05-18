@@ -3,7 +3,7 @@ import { getDB } from '../utils/db.js';
 
 const router = Router();
 
-router.get("/api/leaderboard", async (req, res) => {
+router.get("/leaderboard", async (req, res) => {
     const db = await getDB;
 
     try {

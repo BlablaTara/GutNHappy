@@ -34,6 +34,7 @@
         {#if $authStore.isLoggedIn}
          <Link to="/dashboard">Dashboard</Link>
          <Link to="/add-health">Add Health</Link>
+         <Link to="/leaderboard">Leaderboard</Link>
          <button on:click={handleLogout}>Logout</button>
         {:else if $location.pathname === '/' || $location.pathname === '/login' || $location.pathname === '/about'}
             <Link to="/login">Login</Link>

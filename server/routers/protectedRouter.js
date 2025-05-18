@@ -5,7 +5,7 @@ const router = Router();
 
 router.get("/", isUserLoggedIn, (req, res) => {
   console.log("User status called. Session:", req.session);
-  res.send({ isLogogedIn: req.session.user });
+  res.send({ isLoggedIn: true, user: req.session.user });
 });
 
 export default router;

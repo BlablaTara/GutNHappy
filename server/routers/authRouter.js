@@ -129,12 +129,12 @@ router.post("/reset-password", async (req, res) => {
 });
 
 //ekstra router, som frontend kan kontakte, og finde ud af hvad de vil gøre med
-router.get("/user-status", (req, res) => {
-  if (req.session.user) {
-    return res.status(200).json({ isLoggedIn: true, user: req.session.user });
-  } else {
-    return res.status(401).json({ isLoggedIn: false });
-  }
-});
+// router.get("/user-status", (req, res) => {
+//   if (req.session.user) {
+//     return res.status(200).json({ isLoggedIn: true, user: req.session.user });
+//   } else {
+//     return res.status(401).json({ isLoggedIn: false });
+//   }
+// });
 
 export default router;
