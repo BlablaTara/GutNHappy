@@ -41,48 +41,59 @@
         }
     };
 
+    let hasData = false;
+
     async function updateData() {
-        const result = await fetchGet('/api/protected/user-weekly-selections');
+        try {
+            const result = await fetchGet('/api/protected/user-weekly-selections');
 
-        if (result.error) {
-            return console.error("Error getting weekly data:", result.error);
+            if (result.error) {
+                return console.error("Error getting weekly data:", result.error);
+            }
 
+            const weeklyArray = result.data;
+
+            if (!weeklyArray || weeklyArray.length === 0) {
+                hasData = false;
+                return;
+            }
+
+            hasData = true;
+            summary = weeklyArray;
+
+            chartData.labels = weeklyArray.map(entry => entry.week);
+            chartData.datasets[0].data = weeklyArray.map(entry => entry.fruits);
+            chartData.datasets[1].data = weeklyArray.map(entry => entry.veggies);
+
+            //Array sorteret fra ældste til nyeste uge
+            const latestWeek = weeklyArray[weeklyArray.length - 1] || { fruits: 0, veggies: 0 };
+
+            totalFruits = latestWeek.fruits;
+            totalVeggies = latestWeek.veggies;
+
+            if (chart) {
+                chart.data = chartData;
+                chart.update();
+            }
+
+        } catch (error) {
+            console.error("Unexpected error fetching weekly data:", error);
         }
-
-        const weeklyArray = result.data;
-
-        summary = weeklyArray;
-
-        chartData.labels = weeklyArray.map(entry => entry.week);
-        chartData.datasets[0].data = weeklyArray.map(entry => entry.fruits);
-        chartData.datasets[1].data = weeklyArray.map(entry => entry.veggies);
-
-        //Array sorteret fra ældste til nyeste uge
-        const latestWeek = weeklyArray[weeklyArray.length - 1] || { fruits: 0, veggies: 0 };
-
-        totalFruits = latestWeek.fruits;
-        totalVeggies = latestWeek.veggies;
-
-        if (chart) {
-            chart.data = chartData;
-            chart.update();
-        }
-    }
+       
+    };
 
     onMount(async () => {
         await tick(); // venter til DOM er helt klar
 
-        if (!canvas) {
-            console.log("Canvas-element not here"); //log som skal fjernes
-            return;
-        }
+        await updateData();
 
-        chart = new Chart(canvas, {
-            type: 'bar',
-            data: chartData,
-            options: chartOptions
-        });
-        updateData();
+        if (hasData && canvas) {
+            chart = new Chart(canvas, {
+                type: 'bar',
+                data: chartData,
+                options: chartOptions
+            });
+        }
     });
 
     onDestroy(() => {
@@ -104,9 +115,14 @@
     <!-- <p>{total} out of your weekly goal of 20 different (fruits: {totalFruits}, veggies: {totalVeggies})</p> -->
 
     <h2>Your intake the last 12 weeks</h2>
-    <div class="chart-container">
-        <canvas bind:this={canvas}></canvas>
-    </div>
+    {#if hasData}
+        <div class="chart-container">
+            <canvas bind:this={canvas}></canvas>
+        </div>
+    {:else}
+    <p>You haven't selected any fruits or vegetables yet. Start your healthy journey today!</p>
+    {/if}
+
 </div>
 
 <style>
