@@ -1,63 +1,59 @@
 import "dotenv/config";
-
 import express from "express";
+import path from "path";
+import cors from "cors";
+import session from "express-session";
+import http from "http";
+import { Server } from "socket.io";
+
 const app = express();
 
 app.use(express.json());
-
-import path from "path";
 app.use(express.static(path.resolve("../client/dist/")));
 app.use("/images", express.static(path.resolve("../client/public/images")));
-
-import cors from 'cors';
-app.use(cors({
-	origin: "http://localhost:5173",
-	credentials: true
-}));
-
-import session from "express-session";
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 const sessionMiddleware = session({
-	secret: process.env.SESSION_KEY,
-	resave: false,
-	saveUninitialized: true,
-	cookie: { secure: false }, //skal sættes til true med HTTPS
+  secret: process.env.SESSION_KEY,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }, //skal sættes til true med HTTPS
 });
 
 app.use(sessionMiddleware);
 
-import http from 'http';
-const server = http.createServer(app)
+const server = http.createServer(app);
 
-import { Server } from "socket.io";
 const io = new Server(server, {
-    cors: {
-      	origin: "http://localhost:5173",
-      	credentials: true
-    }
+  cors: {
+    origin: "http://localhost:5173",
+    credentials: true,
+  },
 });
 
 io.engine.use(sessionMiddleware);
 //app.set("io", io);
 
 io.on("connection", (socket) => {
-	const user = socket.request.session.user;
-	console.log("A client is connected", user?.email || "Unknown");
+  const user = socket.request.session.user;
+  console.log("A client is connected", user?.email || "Unknown");
 
+  socket.on("new-selection", (data) => {
+    if (!user) return;
 
-	socket.on("new-selection", (data) => {
-		if (!user) return;
+    console.log(`${user.name} added a new ${data.type}`);
 
-		console.log(`${user.name} added a new ${data.type}`);
-		
-		io.emit("leaderboard-update", { userName: user.name, ...data });
-	})
-	socket.on("disconnect", () => {
-		console.log("A client disconnected", socket.id);
-		
-	});
+    io.emit("leaderboard-update", { userName: user.name, ...data });
+  });
+  socket.on("disconnect", () => {
+    console.log("A client disconnected", socket.id);
+  });
 });
-
 
 import authRouter from "./routers/authRouter.js";
 app.use("/api", authRouter);

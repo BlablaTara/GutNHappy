@@ -1,9 +1,12 @@
-import sqlite3 from "sqlite3";
-import { open } from "sqlite";
+import pkg from 'pg';
+const { Pool } = pkg;
 
-export async function getDB() {
-  return open({
-    filename: "./gutnhappy.db",
-    driver: sqlite3.Database,
-  });
-}
+const pool = new Pool({
+  user: 'gutnuser',
+  host: 'localhost',
+  database: 'gutnhappy',
+  password: 'password',
+  port: 5432,
+});
+
+export default pool;

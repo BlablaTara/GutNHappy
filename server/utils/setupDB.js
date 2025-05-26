@@ -1,76 +1,66 @@
-import sqlite3 from "sqlite3";
-import { open } from "sqlite";
+import { pool } from './db.js';
 
 async function setupDB() {
-  const db = await open({
-    filename: "./gutnhappy.db",
-    driver: sqlite3.Database,
-  });
-
-  await db.exec(
+  await pool.query(
     `CREATE TABLE IF NOT EXISTS users (
-            email TEXT PRIMARY KEY,
-            name TEXT,
+            id SERIAL PRIMARY KEY,
+            email TEXT UNIQE NOT NULL,
+            name TEXT UNIQE NOT NULL,
             password TEXT,
             reset_token TEXT,
-            reset_token_expires INTEGER
-        );`,
+            reset_token_expires BIGINT
+        );`
   );
 
-  await db.exec(
+  await pool.query(
     `CREATE TABLE IF NOT EXISTS fruits (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
             image_url TEXT
         );`,
   );
 
-  await db.exec(
+  await pool.query(
     `CREATE TABLE IF NOT EXISTS vegetables (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
             image_url TEXT
         );`,
   );
 
-  await db.exec(
+  await pool.query(
     `CREATE TABLE IF NOT EXISTS user_fruit_selections (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id TEXT NOT NULL,
-            fruit_id INTEGER NOT NULL,
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            fruit_id INTEGER NOT NULL REFERENCES fruits(id) ON DELETE CASCADE,
             selection_date DATE NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(email) ON DELETE CASCADE,
-            FOREIGN  KEY (fruit_id) REFERENCES fruits(id) ON DELETE CASCADE,
             UNIQUE(user_id, fruit_id, selection_date)
         );`
   );
 
-  await db.exec(
+  await pool.query(
     `CREATE TABLE IF NOT EXISTS user_vegetable_selections (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id TEXT NOT NULL,
-            vegetable_id INTEGER NOT NULL,
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            vegetable_id INTEGER NOT NULL REFERENCES vegetables(id) ON DELETE CASCADE,
             selection_date DATE NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(email) ON DELETE CASCADE,
-            FOREIGN KEY (vegetable_id) REFERENCES vegetables(id) ON DELETE CASCADE,
             UNIQUE(user_id, vegetable_id, selection_date)
         );`
   );
 
 
   //MÅSKE, MÅSKE IKKE. RÅD FRA CHAT.
-  await db.exec(
+  await pool.query(
     `CREATE INDEX IF NOT EXISTS idx_user_fruit_date ON user_fruit_selections(user_id, selection_date);`
   );
 
-  await db.exec(
+  await pool.query(
     `CREATE INDEX IF NOT EXISTS idx_user_veggie_date ON user_vegetable_selections(user_id, selection_date);`
   );
 
   console.log("DB setup complete!");
-  await db.close();
 }
 
 setupDB();
