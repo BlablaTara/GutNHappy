@@ -37,7 +37,6 @@ const io = new Server(server, {
 });
 
 io.engine.use(sessionMiddleware);
-//app.set("io", io);
 
 io.on("connection", (socket) => {
   const user = socket.request.session.user;
