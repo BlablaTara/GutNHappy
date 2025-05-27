@@ -1,5 +1,5 @@
 <script>
-    export let name;
+    export let username;
     export let totalFruits = 0;
     export let totalVeggies = 0;
 
@@ -8,7 +8,7 @@
 </script>
 
 <div class="user-process">
-    <p><strong>{name}</strong>: {total}/20</p>
+    <p><strong>{username}</strong>: {total}/20</p>
     <div class="progress-container">
         <div class="fruit-bar" style="width: {(totalFruits / total) * progress}%"></div>
         <div class="veggie-bar" style="width: {(totalVeggies / total) * progress}%"></div>

@@ -25,7 +25,6 @@ export async function fetchGet(url) {
     }
 
     if (contentType && contentType.includes("application/json")) {
-      //return await response.json();
       const json = await response.json(); // log
       console.log(" Successful fetch GET response:", json); // log
       return json; // log

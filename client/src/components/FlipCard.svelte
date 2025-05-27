@@ -19,8 +19,8 @@
 
   let isFlipped = false;
 
-  let loginData = { email: "bent@bent.dk", password: "" };
-  let signupData = { name: "", email: "", password: "", confirmPassword: "" };
+  let loginData = { username: "", password: "" };
+  let signupData = { username: "", email: "", password: "", confirmPassword: "" };
   let error = "";
 
   async function login() {
@@ -54,7 +54,7 @@
 
     try {
       const response = await fetchPost("/api/signup", {
-        name: signupData.name,
+        username: signupData.username,
         email: signupData.email,
         password: signupData.password,
       });
@@ -87,9 +87,9 @@
         </div>
 
         <input
-          type="email"
-          placeholder="Email..."
-          bind:value={loginData.email}
+          type="username"
+          placeholder="Username..."
+          bind:value={loginData.username}
         />
         <input
           type="password"
@@ -114,8 +114,8 @@
           >
         </div>
         <input
-          placeholder="Name..."
-          bind:value={signupData.name}
+          placeholder="Username..."
+          bind:value={signupData.username}
           on:input={() => (error = "")}
         />
         <input

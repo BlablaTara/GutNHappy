@@ -6,8 +6,8 @@
 
     import Chart from 'chart.js/auto'
 
-    let name = '';
-    $: name = $authStore.user ? $authStore.user.name : "";
+    let username = '';
+    $: username = $authStore.user ? $authStore.user.username : "";
 
     let summary = [];
     let totalFruits = 0;
@@ -108,10 +108,10 @@
 
 <div>
     <h1>Dashboard</h1>
-    <p>Welcome {name}</p>
+    <p>Welcome {username}</p>
 
     <h2>Your weekly healt status</h2>
-    <UserProcess name={name} {totalFruits} {totalVeggies} />
+    <UserProcess username={username} {totalFruits} {totalVeggies} />
     <!-- <p>{total} out of your weekly goal of 20 different (fruits: {totalFruits}, veggies: {totalVeggies})</p> -->
 
     <h2>Your intake the last 12 weeks</h2>

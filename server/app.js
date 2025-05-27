@@ -40,14 +40,14 @@ io.engine.use(sessionMiddleware);
 
 io.on("connection", (socket) => {
   const user = socket.request.session.user;
-  console.log("A client is connected", user?.email || "Unknown");
+  console.log("A client is connected", user?.username || "Unknown");
 
   socket.on("new-selection", (data) => {
     if (!user) return;
 
-    console.log(`${user.name} added a new ${data.type}`);
+    console.log(`${user.username} added a new ${data.type}`);
 
-    io.emit("leaderboard-update", { userName: user.name, ...data });
+    io.emit("leaderboard-update", { username: user.username, ...data });
   });
   socket.on("disconnect", () => {
     console.log("A client disconnected", socket.id);
@@ -55,19 +55,19 @@ io.on("connection", (socket) => {
 });
 
 import authRouter from "./routers/authRouter.js";
-app.use("/api", authRouter);
-
 import protectedRouter from "./routers/protectedRouter.js";
-app.use("/api/protected", protectedRouter);
-
 import fruitsNVeggiesRouter from "./routers/fruitsNVeggiesRouter.js";
-app.use("/api/protected", fruitsNVeggiesRouter);
-
 import dashboardRouter from "./routers/dashboardRouter.js";
-app.use("/api/protected", dashboardRouter);
-
 import leaderboardRouter from "./routers/leaderboardRouter.js";
-app.use("/api/protected", leaderboardRouter);
+
+app.use("/api", authRouter);
+app.use("/api/protected", 
+	protectedRouter,
+	fruitsNVeggiesRouter,
+	dashboardRouter,
+	leaderboardRouter
+);
+
 
 const PORT = 8080;
 server.listen(PORT, () => console.log("Server is running on: ", PORT));

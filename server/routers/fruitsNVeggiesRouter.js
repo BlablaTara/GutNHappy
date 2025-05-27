@@ -24,11 +24,6 @@ router.post("/save-selections", async (req, res) => {
       .send({ error: true, message: "User not authenticated" });
   }
 
-  // const { fruitIds, veggieIds, date } = req.body;
-  // console.log("Received fruitIds:", fruitIds);
-  // console.log("Received veggieIds:", veggieIds);
-  // console.log("Received date:", date);
-
   if (!Array.isArray(fruitIds) || !Array.isArray(veggieIds)) {
     return res
       .status(400)
