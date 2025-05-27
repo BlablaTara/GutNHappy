@@ -1,4 +1,4 @@
-import { pool } from './db.js';
+import pool from './db.js';
 
 async function seedBent() {
   const userEmail = "bent@bent.dk";
