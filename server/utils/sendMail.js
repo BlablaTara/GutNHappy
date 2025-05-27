@@ -19,7 +19,7 @@ export async function sendNewPassword(to, resetLink) {
     text: `Click the following link to reset your password: ${resetLink}`,
     html: `<p>Click the following link to reset your password:</p><p><a href="${resetLink}">${resetLink}</a></p>`,
   };
-
+ 
   try {
     const info = await transporter.sendMail(mailOptions);
     console.log("Email sent: " + info.response);

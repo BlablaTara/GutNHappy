@@ -5,7 +5,7 @@ async function setupDB() {
     `CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
             email TEXT UNIQE NOT NULL,
-            name TEXT UNIQE NOT NULL,
+            userName TEXT UNIQE NOT NULL,
             password TEXT,
             reset_token TEXT,
             reset_token_expires BIGINT
@@ -15,7 +15,7 @@ async function setupDB() {
   await pool.query(
     `CREATE TABLE IF NOT EXISTS fruits (
             id SERIAL PRIMARY KEY,
-            name TEXT NOT NULL,
+            name TEXT UNIQE NOT NULL,
             image_url TEXT
         );`,
   );
@@ -23,7 +23,7 @@ async function setupDB() {
   await pool.query(
     `CREATE TABLE IF NOT EXISTS vegetables (
             id SERIAL PRIMARY KEY,
-            name TEXT NOT NULL,
+            name TEXT UNIQE NOT NULL,
             image_url TEXT
         );`,
   );

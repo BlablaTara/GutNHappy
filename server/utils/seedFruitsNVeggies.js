@@ -1,24 +1,22 @@
-import sqlite3 from "sqlite3";
-import { open } from "sqlite";
+import { pool } from './db.js';
 
 async function seedDB() {
-  const db = await open({
-    filename: "./gutnhappy.db",
-    driver: sqlite3.Database,
-  });
+  await pool.query(
+    `INSERT INTO fruits (name, image_url) VALUES 
+    ('Banana', '/images/fruitsPic/bananas.png'),
+    ('Kiwi', '/images/fruitsPic/kiwis.png')
+    ON CONFLICT DO NOTHING;`
+  );
 
-  await db.run(`INSERT INTO fruits (name, image_url) VALUES 
-        ('Banana', '/images/fruitsPic/banans.png'),
-        ('Kiwi', '/images/fruitsPic/kiwis.png')
-    `);
-
-  await db.run(`INSERT INTO vegetables (name, image_url) VALUES 
-        ('Pepper', '/images/veggiesPic/peppers.png'),
-        ('Broccoli', '/images/veggiesPic/broccolis.png')
-    `);
+  await pool.query(
+    `INSERT INTO vegetables (name, image_url) VALUES 
+    ('Pepper', '/images/veggiesPic/peppers.png'),
+    ('Broccoli', '/images/veggiesPic/broccolis.png')
+    ON CONFLICT DO NOTHING;`
+  );
 
   console.log("DB filled up!");
-  await db.close();
+  await pool.end();
 }
 
 seedDB();
