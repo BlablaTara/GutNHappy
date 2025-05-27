@@ -1,40 +1,39 @@
 import { Router } from 'express';
-import { getDB } from '../utils/db.js';
+import pool from '../utils/db.js';
 
 const router = Router();
 
 router.get("/dashboard", async (req, res) => {
-    const userId = req.session.user?.email;
+    const userId = req.session.user?.id;
 
-    const db = await getDB();
     try {
-        const result = await db.all(
+        const resultDB = await pool.query(
         `
         SELECT week, type, count FROM (
             SELECT 
-                strftime('%Y-%W', selection_date) AS week,
+                TO_CHAR(DATE_TRUNC('week', selection_date), 'IYYY-IW') AS week,
                 'fruit' AS type,
                 COUNT(*) AS count
             FROM user_fruit_selections
-            WHERE user_id = ? AND selection_date >= date('now', '-3 months')
+            WHERE user_id = $1 AND selection_date >= CURRENT_DATE -INTERVAL '3 months'
             GROUP BY week
 
             UNION ALL
 
             SELECT 
-                strftime('%Y-%W', selection_date) AS week,
+                TO_CHAR(DATE_TRUNC('week', selection_date), 'IYYY-IW') AS week,
                 'vegetable' AS type,
                 COUNT(*) AS count
             FROM user_vegetable_selections
-            WHERE user_id = ? AND selection_date >= date('now', '-3 months')
+            WHERE user_id = $1 AND selection_date >= CURRENT_DATE - INTERVAL '3 months'
             GROUP BY week
-        )
+        ) AS combined
         ORDER BY week;
         `,
-            [userId, userId]
+            [userId]
         );
 
-        res.send({ success: true, data: { array: result } });
+        res.send({ success: true, data: { array: resultDB.rows } });
 
     } catch (error) {
         console.error("Error fetching dashboard data:", error);

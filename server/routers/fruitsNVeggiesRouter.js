@@ -1,106 +1,108 @@
 import { Router } from "express";
-import { getDB } from "../utils/db.js";
+import pool from "../utils/db.js";
 
 const router = Router();
 
 router.get("/fruits", async (req, res) => {
-  const db = await getDB();
-  const result = await db.all("SELECT * FROM fruits;");
-  res.send({ data: result });
+  const resultDB = await pool.query("SELECT * FROM fruits;");
+  res.send({ data: resultDB.rows });
 });
 
 router.get("/vegetables", async (req, res) => {
-  const db = await getDB();
-  const result = await db.all("SELECT * FROM vegetables");
-  res.send({ data: result });
+  const resultDB = await pool.query("SELECT * FROM vegetables");
+  res.send({ data: resultDB.rows });
 });
 
 router.post("/save-selections", async (req, res) => {
   const { fruitIds, veggieIds, date } = req.body;
-  console.log("Received fruitIds:", fruitIds);
-  console.log("Received veggieIds:", veggieIds);
-  console.log("Received date:", date);
+  const userId = req.session.user?.id;
+  console.log("User ID in save session:", userId);
+
+  if (!userId) {
+    return res
+      .status(400)
+      .send({ error: true, message: "User not authenticated" });
+  }
+
+  // const { fruitIds, veggieIds, date } = req.body;
+  // console.log("Received fruitIds:", fruitIds);
+  // console.log("Received veggieIds:", veggieIds);
+  // console.log("Received date:", date);
+
+  if (!Array.isArray(fruitIds) || !Array.isArray(veggieIds)) {
+    return res
+      .status(400)
+      .send({ error: true, message: "Fruit og veggie id not correct" });
+  }
+
+  const selectionDate = date || new Date().toISOString().split("T")[0];
+
+  const client = await pool.connect();
 
   try {
-    if (!Array.isArray(fruitIds) || !Array.isArray(veggieIds)) {
-      return res.status(400).send({ error: true, message: "Fruit og veggie id not correct" });
-    }
+    await client.query("START TRANSACTION");
 
-    const selectionDate = date || new Date().toISOString().split('T')[0];
-    const userId = req.session.user?.email;
-    console.log("User ID in save session:", userId);
+    await client.query(
+      "DELETE FROM user_fruit_selections WHERE user_id = $1 AND selection_date = $2",
+      [userId, selectionDate]
+    );
 
-    if (!userId) {
-      return res.status(400).send({ error: true, message: "User not authenticated" });
-    }
+    await client.query(
+      "DELETE FROM user_vegetable_selections WHERE user_id = $1 AND selection_date = $2",
+      [userId, selectionDate]
+    );
 
-    const db = await getDB();
-
-    await db.run("BEGIN TRANSACTION");
-
-    try {
-      await db.run(
-        "DELETE FROM user_fruit_selections WHERE user_id = ? AND selection_date = ?",
-        [userId, selectionDate]
+    for (const fruitId of fruitIds) {
+      await client.query(
+        "INSERT INTO user_fruit_selections (user_id, fruit_id, selection_date) VALUES ($1, $2, $3)",
+        [userId, fruitId, selectionDate]
       );
-
-      await db.run(
-        "DELETE FROM user_vegetable_selections WHERE user_id = ? AND selection_date = ?",
-        [userId, selectionDate]
-      );
-
-      for (const fruitId of fruitIds) {
-        await db.run(
-          "INSERT INTO user_fruit_selections (user_id, fruit_id, selection_date) VALUES (?, ?, ?)",
-          [userId, fruitId, selectionDate]
-        );
-      }
-
-      for (const veggieId of veggieIds) {
-        await db.run(
-          "INSERT INTO user_vegetable_selections (user_id, vegetable_id, selection_date) VALUES (?, ?, ?)",
-          [userId, veggieId, selectionDate]
-        );
-      }
-
-      await db.run("COMMIT");
-
-      res.send({
-        success: true,
-        message: "Your choices is now saved",
-        data: {
-          date: selectionDate,
-          fruitCount: fruitIds.length,
-          veggieCount: veggieIds.length,
-          totalCount: fruitIds.length + veggieIds.length
-        }
-      });
-
-    } catch (error) {
-  
-      await db.run("ROLLBACK");
-      console.error("Could not save selection. Full error:", error.stack || error);
-      res.status(500).send({ error: true, message: "An error occurred while saving your choices" });
     }
 
+    for (const veggieId of veggieIds) {
+      await client.query(
+        "INSERT INTO user_vegetable_selections (user_id, vegetable_id, selection_date) VALUES ($1, $2, $3)",
+        [userId, veggieId, selectionDate]
+      );
+    }
+
+    await client.query("COMMIT");
+
+    res.send({
+      success: true,
+      message: "Your choices is now saved",
+      data: {
+        date: selectionDate,
+        fruitCount: fruitIds.length,
+        veggieCount: veggieIds.length,
+        totalCount: fruitIds.length + veggieIds.length,
+      },
+    });
   } catch (error) {
-    console.error("Could not save selection. Full error:", error.stack || error);
-    res.status(500).send({ error: true, message: "An error occurred while saving your choices" });
+    await client.query("ROLLBACK");
+    console.error(
+      "Could not save selection. Full error:",
+      error.stack || error
+    );
+    res
+      .status(500)
+      .send({
+        error: true,
+        message: "An error occurred while saving your choices",
+      });
+  } finally {
+    client.release();
   }
 });
 
-
 router.get("/user-selections", async (req, res) => {
   try {
-    const userId = req.session.user?.email;
-    console.log("User ID in selections session:", userId);
+    const userId = req.session.user?.id;
     const { date, startDate, endDate } = req.query;
 
-    const db = await getDB();
-    let fruitSelections = [];
-    let veggieSelections = [];
+    // let fruitSelections = [];
+    // let veggieSelections = [];
 
-    //denne til nede er nyt, og virker ikke pr. slet
     let start = startDate;
     let end = endDate;
 
@@ -109,7 +111,6 @@ router.get("/user-selections", async (req, res) => {
       start = weekRange.startDate;
       end = weekRange.endDate;
     }
-    //Slet for at komme tilbage til før.
 
     function getWeekDateRange(date = new Date()) {
       const day = date.getDay(); // 0 = søndag, 1 = mandag
@@ -126,63 +127,65 @@ router.get("/user-selections", async (req, res) => {
       };
     }
 
+    let fruitQuery, veggieQuery, fruitParams, veggieParams;
+
     if (date) {
-      fruitSelections = await db.all(
+      fruitQuery =
         `SELECT f.id, f.name, f.image_url FROM user_fruit_selections ufs
          JOIN fruits f ON ufs.fruit_id = f.id
-         WHERE ufs.user_id = ? AND ufs.selection_date = ?`,
-        [userId, date]
-      );
+         WHERE ufs.user_id = $1 AND ufs.selection_date = $2`;
+      fruitParams = [userId, date];
 
-      veggieSelections = await db.all(
+      veggieQuery =
         `SELECT v.id, v.name, v.image_url FROM user_vegetable_selections uvs
          JOIN vegetables v ON uvs.vegetable_id = v.id
-         WHERE uvs.user_id = ? AND uvs.selection_date = ?`,
-        [userId, date]
-      );
-    }
+         WHERE uvs.user_id = $1 AND uvs.selection_date = $2`;
+      veggieParams = [userId, date];
 
-    else if (startDate && endDate) {
-      fruitSelections = await db.all(
+    } else if (startDate && endDate) {
+      fruitQuery = 
         `SELECT f.id, f.name, f.image_url, ufs.selection_date FROM user_fruit_selections ufs
         JOIN fruits f ON ufs.fruit_id = f.id
-        WHERE ufs.user_id = ? AND ufs.selection_date BETWEEN ? AND ?`,
-        [userId, start, end]
+        WHERE ufs.user_id = $1 AND ufs.selection_date BETWEEN $2 AND $3`
         //[userId, startDate, endDate]
-      );
+      ;
+      fruitParams = [userId, date, end];
 
-      veggieSelections = await db.all(
+      veggieQuery =
         `SELECT v.id, v.name, v.image_url, uvs.selection_date FROM user_vegetable_selections uvs
          JOIN vegetables v ON uvs.vegetable_id = v.id
-         WHERE uvs.user_id = ? AND uvs.selection_date BETWEEN ? AND ?`,
-        [userId, start, end]
+         WHERE uvs.user_id = $1 AND uvs.selection_date BETWEEN $2 AND $3`
         //[userId, startDate, endDate]
-      );
-    }
+      ;
+      veggieParams = [userId, start, end];
 
-    else {
+    } else {
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-      const weekAgoStr = oneWeekAgo.toISOString().split('T')[0];
-      const todayStr = new Date().toISOString().split('T')[0];
+      const weekAgoStr = oneWeekAgo.toISOString().split("T")[0];
+      const todayStr = new Date().toISOString().split("T")[0];
 
-      fruitSelections = await db.all(
+      fruitQuery = 
         `SELECT f.id, f.name, f.image_url, ufs.selection_date FROM user_fruit_selections ufs
          JOIN fruits f ON ufs.fruit_id = f.id
-         WHERE ufs.user_id = ? AND ufs.selection_date BETWEEN ? AND ?`,
-        [userId, weekAgoStr, todayStr]
-      );
+         WHERE ufs.user_id = $1 AND ufs.selection_date BETWEEN $2 AND $3`;
+      fruitParams = [userId, weekAgoStr, todayStr]
 
-      veggieSelections = await db.all(
+      veggieQuery =
         `SELECT v.id, v.name, v.image_url, uvs.selection_date FROM user_vegetable_selections uvs
          JOIN vegetables v ON uvs.vegetable_id = v.id
-         WHERE uvs.user_id = ? AND uvs.selection_date BETWEEN ? AND ?`,
-        [userId, weekAgoStr, todayStr]
-      );
+         WHERE uvs.user_id = $1 AND uvs.selection_date BETWEEN $2 AND $3`;
+      veggieParams = [userId, weekAgoStr, todayStr]
     }
 
-    const uniqueFruitIds = new Set(fruitSelections.map(f => f.id));
-    const uniqueVeggieIds = new Set(veggieSelections.map(v => v.id));
+    const fruitSelectionsResult = await pool.query(fruitQuery, fruitParams);
+    const veggieSelectionsResult = await pool.query(veggieQuery, veggieParams);
+
+    const fruitSelections =fruitSelectionsResult.rows;
+    const veggieSelections =veggieSelectionsResult.rows;
+
+    const uniqueFruitIds = new Set(fruitSelections.map((f) => f.id));
+    const uniqueVeggieIds = new Set(veggieSelections.map((v) => v.id));
 
     res.send({
       success: true,
@@ -192,71 +195,80 @@ router.get("/user-selections", async (req, res) => {
         totalUniqueItems: uniqueFruitIds.size + uniqueVeggieIds.size,
         uniqueFruitCount: uniqueFruitIds.size,
         uniqueVeggieCount: uniqueVeggieIds.size,
-      }
+      },
     });
-
   } catch (error) {
     console.error("Error finding users choice :", error);
-    res.status(500).send({ error: true, message: "Sorry, an error occured, trying to get your choices." });
+    res
+      .status(500)
+      .send({
+        error: true,
+        message: "Sorry, an error occured, trying to get your choices.",
+      });
   }
 });
 
 router.get("/user-weekly-selections", async (req, res) => {
   try {
-    const userId = req.session.user?.email;
-    const db = await getDB();
-
-    // Hent unikke frugter pr. uge
-    const weeklyFruits = await db.all(`
+    const userId = req.session.user?.id;
+    const weeklyFruitsResult = await pool.query(
+      `
       SELECT 
-        strftime('%Y-%W', selection_date) AS week,
+        TO_CHAR(DATE_TRUNC('week', selection_date), 'IYYY-IW') AS week,
         COUNT(DISTINCT fruit_id) AS uniqueFruits
       FROM user_fruit_selections
-      WHERE user_id = ?
+      WHERE user_id = $1
       GROUP BY week
       ORDER BY week DESC
       LIMIT 12
-    `, [userId]);
+    `,
+      [userId]
+    );
 
-    // Hent unikke grøntsager pr. uge
-    const weeklyVeggies = await db.all(`
+    const weeklyVeggiesResult = await pool.query(
+      `
       SELECT 
         strftime('%Y-%W', selection_date) AS week,
         COUNT(DISTINCT vegetable_id) AS uniqueVeggies
       FROM user_vegetable_selections
-      WHERE user_id = ?
+      WHERE user_id = $1
       GROUP BY week
       ORDER BY week DESC
       LIMIT 12
-    `, [userId]);
+    `,
+      [userId]
+    );
 
-    // Sammensæt data pr. uge
-    // Flet arrays så vi har uge, fruits og veggies count samlet
+    const weeklyFruits = weeklyFruitsResult.rows;
+    const weeklyVeggies = weeklyVeggiesResult.rows;
+
     const weeklyDataMap = new Map();
 
     weeklyFruits.forEach(({ week, uniqueFruits }) => {
-      weeklyDataMap.set(week, { week, fruits: uniqueFruits, veggies: 0 });
+      weeklyDataMap.set(week, { week, fruits: parseInt(uniqueFruits, 10), veggies: 0 });
     });
 
     weeklyVeggies.forEach(({ week, uniqueVeggies }) => {
       if (weeklyDataMap.has(week)) {
-        weeklyDataMap.get(week).veggies = uniqueVeggies;
+        weeklyDataMap.get(week).veggies = parseInt(uniqueVeggies, 10);
       } else {
-        weeklyDataMap.set(week, { week, fruits: 0, veggies: uniqueVeggies });
+        weeklyDataMap.set(week, { week, fruits: 0, veggies: parseInt(uniqueVeggies, 10) });
       }
     });
 
-    // Sort efter uge ascending (ældre først)
-    const weeklyData = Array.from(weeklyDataMap.values()).sort((a, b) => a.week.localeCompare(b.week));
+    const weeklyData = Array.from(weeklyDataMap.values()).sort((a, b) =>
+      a.week.localeCompare(b.week)
+    );
 
     res.send({
       success: true,
-      data: weeklyData
+      data: weeklyData,
     });
-
   } catch (error) {
     console.error("Error fetching weekly selections:", error);
-    res.status(500).send({ error: true, message: "Could not fetch weekly selections" });
+    res
+      .status(500)
+      .send({ error: true, message: "Could not fetch weekly selections" });
   }
 });
 
