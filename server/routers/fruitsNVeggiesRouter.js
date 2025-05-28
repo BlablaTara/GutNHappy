@@ -1,5 +1,6 @@
 import { Router } from "express";
 import pool from "../utils/db.js";
+import { getLastNumberOfWeeks } from "../utils/weeks.js";
 
 const router = Router();
 
@@ -150,7 +151,6 @@ router.get("/user-selections", async (req, res) => {
         `SELECT v.id, v.name, v.image_url, uvs.selection_date FROM user_vegetable_selections uvs
          JOIN vegetables v ON uvs.vegetable_id = v.id
          WHERE uvs.user_id = $1 AND uvs.selection_date BETWEEN $2 AND $3`
-        //[userId, startDate, endDate]
       ;
       veggieParams = [userId, start, end];
 
@@ -206,55 +206,78 @@ router.get("/user-selections", async (req, res) => {
 router.get("/user-weekly-selections", async (req, res) => {
   try {
     const userId = req.session.user?.id;
-    const weeklyFruitsResult = await pool.query(
+    
+    const weeksToShow = getLastNumberOfWeeks(10);
+    const weekSet = new Set(weeksToShow);
+
+    const weeklyDataMap = new Map (
+      weeksToShow.map((week) => [week, { week, fruits: 0, veggies: 0}])
+    );
+    
+    const [weeklyFruitsResult, weeklyVeggiesResult] = await Promise.all([
+      pool.query(
       `
       SELECT 
-        TO_CHAR(DATE_TRUNC('week', selection_date), 'IYYY-IW') AS week,
+        TO_CHAR(selection_date, 'IYYY-IW') AS week,
         COUNT(DISTINCT fruit_id) AS uniqueFruits
       FROM user_fruit_selections
       WHERE user_id = $1
       GROUP BY week
-      ORDER BY week DESC
-      LIMIT 12
     `,
       [userId]
-    );
-
-    const weeklyVeggiesResult = await pool.query(
+    ),
+    pool.query(
       `
       SELECT 
-        strftime('%Y-%W', selection_date) AS week,
+        TO_CHAR(selection_date, 'IYYY-IW') AS week,
         COUNT(DISTINCT vegetable_id) AS uniqueVeggies
       FROM user_vegetable_selections
       WHERE user_id = $1
       GROUP BY week
-      ORDER BY week DESC
-      LIMIT 12
     `,
       [userId]
-    );
+    ),
+    ]);
 
-    const weeklyFruits = weeklyFruitsResult.rows;
-    const weeklyVeggies = weeklyVeggiesResult.rows;
+    for (const { week, uniqueFruits } of weeklyFruitsResult.rows) {
+      if (weeklyDataMap.has(week)) {
+        weeklyDataMap.get(week).fruits = parseInt(uniqueFruits, 10);
+      }
+    }
 
-    const weeklyDataMap = new Map();
-
-    weeklyFruits.forEach(({ week, uniqueFruits }) => {
-      weeklyDataMap.set(week, { week, fruits: parseInt(uniqueFruits, 10), veggies: 0 });
-    });
-
-    weeklyVeggies.forEach(({ week, uniqueVeggies }) => {
+    for (const { week, uniqueVeggies } of weeklyVeggiesResult.rows) {
       if (weeklyDataMap.has(week)) {
         weeklyDataMap.get(week).veggies = parseInt(uniqueVeggies, 10);
-      } else {
-        weeklyDataMap.set(week, { week, fruits: 0, veggies: parseInt(uniqueVeggies, 10) });
       }
+    }
+
+
+    // const weeklyFruits = weeklyFruitsResult.rows;
+    // const weeklyVeggies = weeklyVeggiesResult.rows;
+
+    // const weeklyDataMap = new Map();
+
+    // weeklyFruits.forEach(({ week, uniqueFruits }) => {
+    //   weeklyDataMap.set(week, { week, fruits: parseInt(uniqueFruits, 10), veggies: 0 });
+    // });
+
+    // weeklyVeggies.forEach(({ week, uniqueVeggies }) => {
+    //   if (weeklyDataMap.has(week)) {
+    //     weeklyDataMap.get(week).veggies = parseInt(uniqueVeggies, 10);
+    //   } else {
+    //     weeklyDataMap.set(week, { week, fruits: 0, veggies: parseInt(uniqueVeggies, 10) });
+    //   }
+    // });
+
+    const weeklyData = weeksToShow.map((week) => {
+      const entry = weeklyDataMap.get(week);
+      return {
+        ...entry,
+        label: `Week ${week.split("-")[1]}`,
+      };
     });
-
-    const weeklyData = Array.from(weeklyDataMap.values()).sort((a, b) =>
-      a.week.localeCompare(b.week)
-    );
-
+    console.log(weeklyData);
+    
     res.send({
       success: true,
       data: weeklyData,

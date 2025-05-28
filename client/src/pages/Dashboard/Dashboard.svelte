@@ -61,7 +61,7 @@
             hasData = true;
             summary = weeklyArray;
 
-            chartData.labels = weeklyArray.map(entry => entry.week);
+            chartData.labels = weeklyArray.map(entry => entry.label || entry.week);
             chartData.datasets[0].data = weeklyArray.map(entry => entry.fruits);
             chartData.datasets[1].data = weeklyArray.map(entry => entry.veggies);
 
@@ -83,7 +83,7 @@
     };
 
     onMount(async () => {
-        await tick(); // venter til DOM er helt klar
+        await tick(); 
 
         await updateData();
 
@@ -102,8 +102,6 @@
         }
     });
 
-    // $: total = totalFruits + totalVeggies;
-    // $: progress = Math.min((total / 20) * 100, 100);
 </script>
 
 <div>
@@ -114,7 +112,7 @@
     <UserProcess username={username} {totalFruits} {totalVeggies} />
     <!-- <p>{total} out of your weekly goal of 20 different (fruits: {totalFruits}, veggies: {totalVeggies})</p> -->
 
-    <h2>Your intake the last 12 weeks</h2>
+    <h2>Your intake the last 10 weeks</h2>
     {#if hasData}
         <div class="chart-container">
             <canvas bind:this={canvas}></canvas>
@@ -126,26 +124,6 @@
 </div>
 
 <style>
-    /* .progress-container {
-        display: flex;
-
-        height: 30px;
-        background: #e0e0e0;
-        border-radius: 20px;
-        overflow: hidden;
-        margin-bottom: 2rem;
-    }
-
-    .fruit-bar {
-        background-color: #ffa726;
-        height: 100%;
-    }
-
-    .veggie-bar {
-        background-color: #66bb6a;
-        height: 100%;
-    } */
-
     .chart-container {
         width: 100%;
         height: 300px;
