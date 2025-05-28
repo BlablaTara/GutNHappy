@@ -71,6 +71,8 @@
             totalFruits = latestWeek.fruits;
             totalVeggies = latestWeek.veggies;
 
+            console.log("Weekly data", weeklyArray); //LoG
+
             if (chart) {
                 chart.data = chartData;
                 chart.update();

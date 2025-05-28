@@ -44,7 +44,7 @@
 {#each sortedUsers as user, index}
 <div class="ranking">
     <span class="medal">{index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}` }</span>
-    <UserProcess name={user.username} totalFruits={user.totalFruits} totalVeggies={user.totalVeggies} />
+    <UserProcess username={user.username} totalFruits={user.totalFruits} totalVeggies={user.totalVeggies} />
 
 </div>
 {/each}

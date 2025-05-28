@@ -4,7 +4,7 @@ import pool from '../utils/db.js';
 const router = Router();
 
 router.get("/leaderboard", async (req, res) => {
-
+    console.log(" leaderboard Session:", req.session);
     try {
         const resultDB = pool.query( 
            `

@@ -92,6 +92,7 @@ router.post("/save-selections", async (req, res) => {
 });
 
 router.get("/user-selections", async (req, res) => {
+  console.log("user-selection Session:", req.session);
   try {
     const userId = req.session.user?.id;
     const { date, startDate, endDate } = req.query;
@@ -145,7 +146,7 @@ router.get("/user-selections", async (req, res) => {
         WHERE ufs.user_id = $1 AND ufs.selection_date BETWEEN $2 AND $3`
         //[userId, startDate, endDate]
       ;
-      fruitParams = [userId, date, end];
+      fruitParams = [userId, start, end];
 
       veggieQuery =
         `SELECT v.id, v.name, v.image_url, uvs.selection_date FROM user_vegetable_selections uvs
@@ -204,21 +205,27 @@ router.get("/user-selections", async (req, res) => {
 });
 
 router.get("/user-weekly-selections", async (req, res) => {
+  console.log("user-weekly-selections Session:", req.session);
   try {
     const userId = req.session.user?.id;
+
+    console.log("weekly-selections userId: ", userId);
+    
     
     const weeksToShow = getLastNumberOfWeeks(10);
-    const weekSet = new Set(weeksToShow);
 
     const weeklyDataMap = new Map (
       weeksToShow.map((week) => [week, { week, fruits: 0, veggies: 0}])
     );
+
+    console.log('weeklyDataMap efter opdatering:', Array.from(weeklyDataMap.entries()));
+
     
     const [weeklyFruitsResult, weeklyVeggiesResult] = await Promise.all([
       pool.query(
       `
       SELECT 
-        TO_CHAR(selection_date, 'IYYY-IW') AS week,
+        TO_CHAR(DATE_TRUNC('week', selection_date), 'IYYY-IW') AS week,
         COUNT(DISTINCT fruit_id) AS uniqueFruits
       FROM user_fruit_selections
       WHERE user_id = $1
@@ -229,7 +236,7 @@ router.get("/user-weekly-selections", async (req, res) => {
     pool.query(
       `
       SELECT 
-        TO_CHAR(selection_date, 'IYYY-IW') AS week,
+        TO_CHAR(DATE_TRUNC('week', selection_date), 'IYYY-IW') AS week,
         COUNT(DISTINCT vegetable_id) AS uniqueVeggies
       FROM user_vegetable_selections
       WHERE user_id = $1
@@ -239,15 +246,16 @@ router.get("/user-weekly-selections", async (req, res) => {
     ),
     ]);
 
-    for (const { week, uniqueFruits } of weeklyFruitsResult.rows) {
+    for (const { week, uniquefruits } of weeklyFruitsResult.rows) {
       if (weeklyDataMap.has(week)) {
-        weeklyDataMap.get(week).fruits = parseInt(uniqueFruits, 10);
+        weeklyDataMap.get(week).fruits = parseInt(uniquefruits, 10) || 0;
+
       }
     }
 
-    for (const { week, uniqueVeggies } of weeklyVeggiesResult.rows) {
+    for (const { week, uniqueveggies } of weeklyVeggiesResult.rows) {
       if (weeklyDataMap.has(week)) {
-        weeklyDataMap.get(week).veggies = parseInt(uniqueVeggies, 10);
+      weeklyDataMap.get(week).veggies = parseInt(uniqueveggies, 10) || 0;
       }
     }
 
@@ -276,7 +284,10 @@ router.get("/user-weekly-selections", async (req, res) => {
         label: `Week ${week.split("-")[1]}`,
       };
     });
-    console.log(weeklyData);
+
+    console.log("FRUGTER fra DB:", weeklyFruitsResult.rows); //LOG
+    console.log("VEGETABLER fra DB:", weeklyVeggiesResult.rows); //LOG
+    console.log("weeksToShow:", weeksToShow); //LOG
     
     res.send({
       success: true,

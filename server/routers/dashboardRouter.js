@@ -4,6 +4,7 @@ import pool from '../utils/db.js';
 const router = Router();
 
 router.get("/dashboard", async (req, res) => {
+    console.log(" dashboard Session:", req.session);
     const userId = req.session.user?.id;
 
     try {
@@ -15,7 +16,7 @@ router.get("/dashboard", async (req, res) => {
                 'fruit' AS type,
                 COUNT(*) AS count
             FROM user_fruit_selections
-            WHERE user_id = $1 AND selection_date >= CURRENT_DATE -INTERVAL '3 months'
+            WHERE user_id = $1 AND selection_date >= CURRENT_DATE -INTERVAL '10 weeks'
             GROUP BY week
 
             UNION ALL
@@ -25,7 +26,7 @@ router.get("/dashboard", async (req, res) => {
                 'vegetable' AS type,
                 COUNT(*) AS count
             FROM user_vegetable_selections
-            WHERE user_id = $1 AND selection_date >= CURRENT_DATE - INTERVAL '3 months'
+            WHERE user_id = $1 AND selection_date >= CURRENT_DATE - INTERVAL '10 weeks'
             GROUP BY week
         ) AS combined
         ORDER BY week;
@@ -33,7 +34,7 @@ router.get("/dashboard", async (req, res) => {
             [userId]
         );
 
-        res.send({ success: true, data: { array: resultDB.rows } });
+        res.send({ success: true, data: resultDB.rows });
 
     } catch (error) {
         console.error("Error fetching dashboard data:", error);
