@@ -19,6 +19,7 @@
         const result = await fetchGet("/api/protected/leaderboard")
         if (result.success && Array.isArray(result.data)) {
             users = result.data;
+            console.log("Leaderboard data:", result.data);
         } else {
             users = [];
         }
@@ -44,7 +45,7 @@
 {#each sortedUsers as user, index}
 <div class="ranking">
     <span class="medal">{index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}` }</span>
-    <UserProcess username={user.username} totalFruits={user.totalFruits} totalVeggies={user.totalVeggies} />
+    <UserProcess username={user.username} totalFruits={user.totalfruits} totalVeggies={user.totalveggies} />
 
 </div>
 {/each}

@@ -6,7 +6,7 @@ const router = Router();
 router.get("/leaderboard", async (req, res) => {
     console.log(" leaderboard Session:", req.session);
     try {
-        const resultDB = pool.query( 
+        const resultDB = await pool.query( 
            `
             SELECT 
                 u.username,
@@ -28,6 +28,7 @@ router.get("/leaderboard", async (req, res) => {
             ORDER BY (COALESCE(f.totalFruits, 0) + COALESCE(v.totalVeggies, 0)) DESC
             `
         );
+        console.log("Leaderboard DB rows:", resultDB.rows);
         res.send({ success: true, data: resultDB.rows });
     } catch (error) {
         console.error("Error getting leaderbord data", error);

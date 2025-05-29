@@ -3,15 +3,20 @@
     export let totalFruits = 0;
     export let totalVeggies = 0;
 
+    $: fruits = Number(totalFruits);
+    $: veggies = Number(totalVeggies);
     $: total = totalFruits + totalVeggies;
     $: progress = Math.min((total / 20) * 100, 100);
+
+    $: console.log(`Rendering ${username}: fruits=${fruits}, veggies=${veggies}, total=${total}, progress=${progress}`);
+
 </script>
 
 <div class="user-process">
     <p><strong>{username}</strong>: {total}/20</p>
     <div class="progress-container">
-        <div class="fruit-bar" style="width: {(totalFruits / total) * progress}%"></div>
-        <div class="veggie-bar" style="width: {(totalVeggies / total) * progress}%"></div>
+        <div class="fruit-bar" style="width: {total > 0 ? (fruits / total) * progress : 0}%"></div>
+        <div class="veggie-bar" style="width: {total > 0 ? (veggies / total) * progress : 0}%"></div>
 
     </div>
 </div>
