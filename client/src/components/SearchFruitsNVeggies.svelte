@@ -6,7 +6,7 @@
     export let filteredFruits = [];
     export let filteredVeggies = [];
 
-    let query = '';
+    export let query = '';
 
     $: if (query.trim().length >= 2) {
         const lowerQuery = query.trim().toLowerCase();
@@ -18,8 +18,8 @@
             veggie.name.toLowerCase().includes(lowerQuery)
         );
     } else {
-        filteredFruits = [];
-        filteredVeggies = [];
+        filteredFruits = fruits;
+        filteredVeggies = veggies;
     }
 </script>
 

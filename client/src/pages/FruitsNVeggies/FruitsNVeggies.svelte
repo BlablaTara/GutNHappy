@@ -10,6 +10,8 @@
         withCredentials: true
     });
 
+    let query = "";
+
     let fruits = [];
     let veggies = [];
 
@@ -58,15 +60,21 @@
             
         }
         
-    }    
-
-    $: if (fruits.length && filteredFruits.length === 0) {
-        filteredFruits = fruits;
+    }
+    
+    $: {
+        if (query.trim().length >= 2) {
+            const lowerQuery = query.trim()
+        }
     }
 
-    $: if (veggies.length && filteredVeggies.length ===0) {
-        filteredVeggies = veggies;
-    }
+    // $: if (fruits.length && filteredFruits.length === 0) {
+    //     filteredFruits = fruits;
+    // }
+
+    // $: if (veggies.length && filteredVeggies.length ===0) {
+    //     filteredVeggies = veggies;
+    // }
     
 
     function toggleFruit(fruit) {
@@ -157,32 +165,38 @@
 {/if}
 
 <SearchFruitsNVeggies 
-    {fruits} 
+    {fruits}
     {veggies}
     bind:filteredFruits
-    bind:filteredVeggies />
+    bind:filteredVeggies
+    bind:query />
 
-<h2>Fruits</h2>
-<div class="grid">
-    {#each filteredFruits as fruit}
-    <FoodBox 
-        food={fruit} 
-        selected={selectedFruitIds.includes(fruit.id)} 
-        onToggle={toggleFruit} 
-    />
-    {/each}    
-</div>
+{#if filteredFruits.length > 0 }
+    <h2>Fruits</h2>
+    <div class="grid">
+        {#each filteredFruits as fruit}
+        <FoodBox 
+            food={fruit} 
+            selected={selectedFruitIds.includes(fruit.id)} 
+            onToggle={toggleFruit} 
+        />
+        {/each}    
+    </div>
+{/if}
 
-<h2>Veggies</h2>
-<div class="grid">
-    {#each filteredVeggies as veg}
-    <FoodBox 
-        food={veg} 
-        selected={selectedVeggieIds.includes(veg.id)} 
-        onToggle={toggleVeggie} 
-    />
-    {/each}
-</div>
+{#if filteredVeggies.length > 0}
+    <h2>Veggies</h2>
+    <div class="grid">
+        {#each filteredVeggies as veg}
+        <FoodBox 
+            food={veg} 
+            selected={selectedVeggieIds.includes(veg.id)} 
+            onToggle={toggleVeggie} 
+        />
+        {/each}
+    </div>
+{/if}
+
 
 <div class="save">
     <button class="save-button" on:click={saveSelections} disabled={isSaving}>
