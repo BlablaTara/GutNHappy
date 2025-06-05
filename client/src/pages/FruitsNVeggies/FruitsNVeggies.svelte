@@ -4,6 +4,7 @@
     import { authStore } from "../../stores/authStore.js";
     import { fetchGet, fetchPost } from "../../utils/fetch.js";
     import { io } from "socket.io-client";
+    import SearchFruitNVeggie from "../../components/SearchFruitNVeggie.svelte";
 
     const socket = io("http://localhost:8080", {
         withCredentials: true
@@ -146,7 +147,7 @@
     </div>
 {/if}
 
-
+<SearchFruitNVeggie {fruits} {veggies} />
 
 <h2>Fruits</h2>
 <div class="grid">
