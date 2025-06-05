@@ -2,69 +2,50 @@
   export let food;
   export let selected = false;
   export let onToggle;
-
-  function toggle() {
-    onToggle(food);
-  }
+  export let onInfoClick = (food) => {};
 </script>
 
-<button
+<div
   class="box {selected ? 'selected' : ''}"
-  on:click={toggle}
-  type="button"
+  on:click={() => onToggle(food)}
+  role="button"
+  tabindex="0"
+  on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && onToggle(food)}
 >
   <div class="image-wrapper">
     <img src={food.image_url} alt={food.name} />
     {#if selected}
       <div class="checkmark">✔</div>
     {/if}
+    <button
+      type="button"
+      class="info-icon"
+      on:click|stopPropagation={() => onInfoClick(food)}
+      aria-label="Show info about this food"
+    >
+      ?
+    </button>
   </div>
   <p>{food.name}</p>
-</button>
+</div>
+
 
 <style>
-  button.box {
+  .info-icon {
     all: unset;
-    border: 2px solid gray;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    text-align: center;
     cursor: pointer;
-    width: 120px;
-
-    position: relative;
-    background-color: rgb(254, 251, 238);
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #666;
+    background-color: #f0f0f0;
+    padding: 0.2rem 0.4rem;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   }
-
-  .selected {
-    border-color: green;
-    background-color: #eaffea;
-  }
-
   .image-wrapper {
     position: relative;
-  }
-
-  img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 0.5rem;
-  }
-  .checkmark {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background-color: green;
-    color: white;
-    font-weight: bold;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
   }
 </style>

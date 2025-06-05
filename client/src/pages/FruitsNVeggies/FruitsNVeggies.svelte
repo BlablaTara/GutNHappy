@@ -5,10 +5,13 @@
     import { fetchGet, fetchPost } from "../../utils/fetch.js";
     import { io } from "socket.io-client";
     import SearchFruitsNVeggies from "../../components/SearchFruitsNVeggies.svelte";
+    import ShowFoodModal from "../../components/ShowFoodModal.svelte";
 
     const socket = io("http://localhost:8080", {
         withCredentials: true
     });
+
+    let selectedFood = null;
 
     let query = "";
 
@@ -61,21 +64,6 @@
         }
         
     }
-    
-    $: {
-        if (query.trim().length >= 2) {
-            const lowerQuery = query.trim()
-        }
-    }
-
-    // $: if (fruits.length && filteredFruits.length === 0) {
-    //     filteredFruits = fruits;
-    // }
-
-    // $: if (veggies.length && filteredVeggies.length ===0) {
-    //     filteredVeggies = veggies;
-    // }
-    
 
     function toggleFruit(fruit) {
         if (selectedFruitIds.includes(fruit.id)) {
@@ -178,7 +166,8 @@
         <FoodBox 
             food={fruit} 
             selected={selectedFruitIds.includes(fruit.id)} 
-            onToggle={toggleFruit} 
+            onToggle={toggleFruit}
+            onInfoClick={(food) => selectedFood = food} 
         />
         {/each}    
     </div>
@@ -191,11 +180,17 @@
         <FoodBox 
             food={veg} 
             selected={selectedVeggieIds.includes(veg.id)} 
-            onToggle={toggleVeggie} 
+            onToggle={toggleVeggie}
+            onInfoClick={(food) => selectedFood = food}  
         />
         {/each}
     </div>
 {/if}
+
+{#if selectedFood}
+  <ShowFoodModal food={selectedFood} on:close={() => selectedFood = null} />
+{/if}
+
 
 
 <div class="save">
