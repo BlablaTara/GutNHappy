@@ -4,17 +4,18 @@
     import { authStore } from "../../stores/authStore.js";
     import { fetchGet, fetchPost } from "../../utils/fetch.js";
     import { io } from "socket.io-client";
-    import SearchFruitNVeggie from "../../components/SearchFruitNVeggie.svelte";
+    import SearchFruitsNVeggies from "../../components/SearchFruitsNVeggies.svelte";
 
     const socket = io("http://localhost:8080", {
         withCredentials: true
     });
 
-    // let name = '';
-    // $: name = $authStore.user ? $authStore.user.name : "";
-
     let fruits = [];
     let veggies = [];
+
+    let filteredFruits = [];
+    let filteredVeggies = [];
+
 
     let selectedFruitIds = [];
     let selectedVeggieIds = [];
@@ -58,6 +59,14 @@
         }
         
     }    
+
+    $: if (fruits.length && filteredFruits.length === 0) {
+        filteredFruits = fruits;
+    }
+
+    $: if (veggies.length && filteredVeggies.length ===0) {
+        filteredVeggies = veggies;
+    }
     
 
     function toggleFruit(fruit) {
@@ -147,11 +156,15 @@
     </div>
 {/if}
 
-<SearchFruitNVeggie {fruits} {veggies} />
+<SearchFruitsNVeggies 
+    {fruits} 
+    {veggies}
+    bind:filteredFruits
+    bind:filteredVeggies />
 
 <h2>Fruits</h2>
 <div class="grid">
-    {#each fruits as fruit}
+    {#each filteredFruits as fruit}
     <FoodBox 
         food={fruit} 
         selected={selectedFruitIds.includes(fruit.id)} 
@@ -162,7 +175,7 @@
 
 <h2>Veggies</h2>
 <div class="grid">
-    {#each veggies as veg}
+    {#each filteredVeggies as veg}
     <FoodBox 
         food={veg} 
         selected={selectedVeggieIds.includes(veg.id)} 
