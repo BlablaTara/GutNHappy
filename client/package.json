@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "fix": "rm -rf node_modules package-lock.json && npm install",
     "build": "vite build",
     "build-watch": "vite build --watch",
     "preview": "vite preview"
