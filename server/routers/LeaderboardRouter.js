@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import pool from '../utils/db.js';
+import { getWeek } from '../utils/weeks.js'
 
 const router = Router();
 
@@ -29,7 +30,7 @@ router.get("/leaderboard", async (req, res) => {
             `
         );
         console.log("Leaderboard DB rows:", resultDB.rows);
-        res.send({ success: true, data: resultDB.rows });
+        res.send({ success: true, data: resultDB.rows, week: getWeek(new Date()) });
     } catch (error) {
         console.error("Error getting leaderbord data", error);
         res.status(500).send({ error: true, message: "Error getting leaderboard data"})

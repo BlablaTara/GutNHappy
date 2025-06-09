@@ -157,7 +157,12 @@
     {veggies}
     bind:filteredFruits
     bind:filteredVeggies
-    bind:query />
+    bind:query 
+/>
+
+<p class="count-display">
+    Today you ate: {selectedFruitIds.length + selectedVeggieIds.length} different types of fruits and vegetables
+</p>
 
 {#if filteredFruits.length > 0 }
     <h2>Fruits</h2>
@@ -197,12 +202,12 @@
     <button class="save-button" on:click={saveSelections} disabled={isSaving}>
         {isSaving ? 'Saving...' : 'Save my choices'}
     </button>
-    <p class="count-display">
-        Today you ate: {selectedFruitIds.length + selectedVeggieIds.length} different types of fruits and vegetables
-    </p>
 </div>
 
 <style>
+    h2 {
+        text-align: center;
+    }
     .grid {
         display: flex;
         flex-wrap: wrap;

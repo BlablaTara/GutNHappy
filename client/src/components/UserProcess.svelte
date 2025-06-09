@@ -28,9 +28,9 @@
 
     .progress-container {
         display: flex;
-        height: 20px;
+        height: 30px;
         background: #e0e0e0;
-        border-radius: 10px;
+        border-radius: 15px;
         overflow: hidden;
     }
 

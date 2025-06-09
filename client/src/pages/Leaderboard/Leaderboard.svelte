@@ -6,11 +6,12 @@
 
     let users = [];
     let socket;
+    let currentWeek = "";
 
     $: sortedUsers = Array.isArray(users) 
         ? [...users].sort((a, b) => {
-            const totalA = a.totalFruits + a.totalVeggies;
-            const totalB = b.totalFruits + b.totalVeggies;
+            const totalA = Number(a.totalFruits) + Number(a.totalVeggies);
+            const totalB = Number(b.totalFruits) + Number(b.totalVeggies);
         return totalB - totalA;
     })
     : [];
@@ -19,6 +20,7 @@
         const result = await fetchGet("/api/protected/leaderboard")
         if (result.success && Array.isArray(result.data)) {
             users = result.data;
+            currentWeek = result.week;
             console.log("Leaderboard data:", result.data);
         } else {
             users = [];
@@ -42,10 +44,49 @@
 
 <h1>Leaderboard</h1>
 
+<h2 class="rank-header">
+    Top eaters for gut diversity this week:
+</h2>
+<h3 class="show-week">
+    Week: {currentWeek.split("-") [1]}
+</h3>
+
 {#each sortedUsers as user, index}
 <div class="ranking">
     <span class="medal">{index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}` }</span>
-    <UserProcess username={user.username} totalFruits={user.totalfruits} totalVeggies={user.totalveggies} />
+    <UserProcess username={user.username} totalFruits={Number(user.totalfruits)} totalVeggies={Number(user.totalveggies)} />
 
 </div>
 {/each}
+
+<style>
+    .rank-header {
+        font-size:2rem;
+        margin-bottom: 1rem;
+    }
+    .show-week {
+        margin-top: 2rem;
+        margin-bottom: 0.1;
+        color: #666;
+
+    }
+
+    .ranking {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        border-bottom: 1px solid #ccc;
+    }
+    .ranking :global(.user-process) {
+        flex-grow: 1;
+    }
+
+    .medal {
+        font-size: 3.5rem;
+        width: 4rem;
+        text-align: center;
+        margin-top: 10px;
+    }
+</style>

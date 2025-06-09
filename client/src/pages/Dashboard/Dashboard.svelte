@@ -107,10 +107,9 @@
 </script>
 
 <div>
-    <h1>Dashboard</h1>
-    <p>Welcome {username}</p>
+    <h1>Welcome {username}</h1>
 
-    <h2>Your weekly healt status</h2>
+    <h2>Your weekly healt status:</h2>
     <UserProcess username={username} {totalFruits} {totalVeggies} />
     <!-- <p>{total} out of your weekly goal of 20 different (fruits: {totalFruits}, veggies: {totalVeggies})</p> -->
 
