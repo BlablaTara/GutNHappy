@@ -24,7 +24,17 @@
 </script>
 
 <input
+    class="search-input"
     type="text"
     placeholder="Search ..."
     bind:value={query}
 />
+
+<style>
+    .search-input {
+        border-radius: 15px;
+        padding: 10px;
+        width: 40%;
+    }
+
+</style>

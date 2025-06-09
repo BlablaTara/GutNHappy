@@ -206,6 +206,7 @@
     .grid {
         display: flex;
         flex-wrap: wrap;
+        justify-content: center;
         gap: 1rem;
         margin-bottom: 2rem;
     }
