@@ -13,7 +13,7 @@
 }
 
 .navbar-left img {
-  height: 50px;
+  height: 70px;
 }
 
 .navbar-right {
@@ -26,12 +26,12 @@
   text-decoration: none;
   color: #0a5c32;
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 1.5rem;
   transition: color 0.2s;
 }
 
 .navbar-right a:hover {
-  color: #0f7742;
+  color: #4CAF50;
 }
 
 .navbar-right button {
@@ -43,5 +43,8 @@
   cursor: pointer;
   padding: 0.5rem 1rem;
   text-decoration: underline;
-  font-size: 1rem;
+  font-size: 1.5rem;
+}
+.navbar-right button:hover {
+  color: #4CAF50;
 }

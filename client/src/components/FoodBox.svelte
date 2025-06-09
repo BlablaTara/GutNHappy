@@ -50,7 +50,7 @@
     background-color: rgb(254, 251, 238);
     
   }
-  .box-hover {
+  .box:hover {
     border-color: #666;
     box-shadow: 0 px 6px rgba(0, 0, 0, 0.1);
   }

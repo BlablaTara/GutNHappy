@@ -223,7 +223,7 @@
         background-color: #4CAF50;
         color: white;
         border: none;
-        border-radius: 4px;
+        border-radius: 10px;
         font-size: 1rem;
         cursor: pointer;
         transition: background-color 0.3s;
