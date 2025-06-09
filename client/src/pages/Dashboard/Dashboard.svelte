@@ -3,8 +3,10 @@
     import { authStore } from "../../stores/authStore.js";
     import { fetchGet } from "../../utils/fetch.js";
     import UserProcess from "../../components/UserProcess.svelte";
+    import FoodBox from "../../components/FoodBox.svelte";
 
     import Chart from 'chart.js/auto'
+
 
     let username = '';
     $: username = $authStore.user ? $authStore.user.username : "";
@@ -43,9 +45,13 @@
 
     let hasData = false;
 
+    let selectedFruits = [];
+    let selectedVeggies = [];
+
     async function updateData() {
         try {
             const result = await fetchGet('/api/protected/user-weekly-selections');
+
 
             if (result.error) {
                 return console.error("Error getting weekly data:", result.error);
@@ -70,6 +76,14 @@
 
             totalFruits = latestWeek.fruits;
             totalVeggies = latestWeek.veggies;
+
+
+            const selectionsResult = await fetchGet('/api/protected/user-selections');
+
+            if (selectionsResult?.data) {
+                selectedFruits = selectionsResult.data.fruits || [];
+                selectedVeggies = selectionsResult.data.vegetables || [];
+            }
 
             console.log("Weekly data", weeklyArray); //LoG
 
@@ -122,6 +136,21 @@
     <p>You haven't selected any fruits or vegetables yet. Start your healthy journey today!</p>
     {/if}
 
+
+    {#if selectedFruits.length || selectedVeggies.length}
+        <h2>This weeks intake:</h2>
+        <div class="selected-grid">
+            {#each selectedFruits as fruit}
+                <FoodBox food={fruit} selected={true} onToggle={() => {}} />
+            {/each}
+            {#each selectedVeggies as veggie}
+                <FoodBox food={veggie} selected={true} onToggle={() => {}} />
+            {/each}            
+
+        </div>
+    {/if}
+
+
 </div>
 
 <style>
@@ -133,5 +162,12 @@
     canvas {
         width: 100% !important;
         height: 300px !important;
+    }
+
+    .selected-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 2rem;
     }
 </style>
