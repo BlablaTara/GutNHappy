@@ -47,6 +47,7 @@
 
     let selectedFruits = [];
     let selectedVeggies = [];
+    //let noSelectionsThisWeek = false;
 
     async function updateData() {
         try {
@@ -58,11 +59,6 @@
             }
 
             const weeklyArray = result.data;
-
-            if (!weeklyArray || weeklyArray.length === 0) {
-                hasData = false;
-                return;
-            }
 
             hasData = true;
             summary = weeklyArray;
@@ -92,11 +88,15 @@
                 chart.update();
             }
 
+           //noSelectionsThisWeek = selectedFruits.length 
+
         } catch (error) {
             console.error("Unexpected error fetching weekly data:", error);
         }
        
     };
+
+    let noSelectionsThisWeek = false;
 
     onMount(async () => {
         await tick(); 
@@ -121,7 +121,14 @@
 </script>
 
 <div>
+        
     <h1>Welcome {username}</h1>
+    {#if selectedFruits.length === 0 && selectedVeggies.length === 0}
+        <p>You haven't selected any fruits or vegetables yet</p>
+        <div class="start">
+            <p>🌱Start your healthy journey <a class="start-link" href="/add-health">here!</a>🌱</p>
+        </div>
+    {/if}
 
     <h2>Your weekly healt status:</h2>
     <UserProcess username={username} {totalFruits} {totalVeggies} />
@@ -133,7 +140,7 @@
             <canvas bind:this={canvas}></canvas>
         </div>
     {:else}
-    <p>You haven't selected any fruits or vegetables yet. Start your healthy journey today!</p>
+    <p>You haven't selected any fruits or vegetables yet</p>
     {/if}
 
 
@@ -148,12 +155,24 @@
             {/each}            
 
         </div>
+    {:else}
+    <p>You haven't added any fruits or vegetables for this week yet.</p>
+
     {/if}
 
 
 </div>
 
 <style>
+    .start {
+        text-align: center;
+        font-size: 1.5rem;
+    }
+    .start-link {
+        font-weight: bold;
+        text-decoration-line: underline;
+
+    }
     .chart-container {
         width: 100%;
         height: 300px;

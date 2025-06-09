@@ -68,12 +68,13 @@ router.post("/signup", async (req, res) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  await pool.query(
-    `INSERT INTO users (email, username, password) VALUES ($1, $2, $3)`,
+
+  const resultInsert = await pool.query(
+    `INSERT INTO users (email, username, password) VALUES ($1, $2, $3) RETURNING id`,
     [email, username, hashedPassword]
   );
 
-  const id = resultDB.rows[0].id;
+  const id = resultInsert.rows[0].id;
 
   req.session.user = { id, email, username };
   res.status(200).send({ success: true });
@@ -102,7 +103,7 @@ router.post("/forgot-password", async (req, res) => {
     [token, newPasswordExpires, email]
   );
 
-  const resetLink = `http://localhost:8080/reset-password?token=${token}`;
+  const resetLink = `http://localhost:5173/reset-password?token=${token}`;
 
   const resultEmail = await sendNewPassword(email, resetLink);
   if (resultEmail.success) {
