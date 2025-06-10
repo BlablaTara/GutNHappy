@@ -21,7 +21,7 @@ app.use(
 const sessionMiddleware = session({
   secret: process.env.SESSION_KEY,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: { secure: false }, //skal sættes til true med HTTPS
 });
 

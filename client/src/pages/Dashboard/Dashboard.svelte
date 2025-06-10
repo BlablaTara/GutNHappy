@@ -47,7 +47,6 @@
 
     let selectedFruits = [];
     let selectedVeggies = [];
-    //let noSelectionsThisWeek = false;
 
     async function updateData() {
         try {
@@ -96,7 +95,6 @@
        
     };
 
-    let noSelectionsThisWeek = false;
 
     onMount(async () => {
         await tick(); 

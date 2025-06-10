@@ -2,6 +2,8 @@
   import { fetchPost } from "../utils/fetch.js";
   import toastr from "toastr";
   import { onMount } from "svelte";
+  import { authStore } from "../stores/authStore.js";
+  import { navigate } from "svelte-routing";
 
   onMount(() => {
     console.log("FlipCard route Mountet");
@@ -38,9 +40,18 @@
       error = response.error; //viser rød respons i formen
     } else {
       toastr.success("Login successful! - redirecting...");
-      setTimeout(() => {
-        window.location.href = "/dashboard";
-      }, 1500);
+
+      if (!response.error) {
+        authStore.set({ isLoggedIn: true, user: response.user, loading: false });
+        
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1500);
+
+      } else {
+        authStore.set({ isLoggedIn: false, user: null, loading: false });
+        toastr.error("Couldn't verify login. Please try again.");
+      }
     }
   }
 

@@ -6,8 +6,10 @@
 
     export let component;
 
-    onMount(async () => {
-        console.log("Private route Mountet");
+    let loading = true;
+
+    onMount(async () => {        
+        authStore.set({ isLoggedIn: false, user: null, loading: true });
         
         const result = await fetchGet("/api/protected");
 
@@ -17,12 +19,12 @@
         } else {
             authStore.set({ isLoggedIn: true, user: result.user, loading: false });
         }
-
+        loading = false;
     });
 
 </script>
 
-{#if $authStore.loading}
+{#if loading}
     <p>Loading...</p>
 {:else if $authStore.isLoggedIn}
     <svelte:component this={component} />
