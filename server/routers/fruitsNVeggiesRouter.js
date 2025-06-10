@@ -1,5 +1,6 @@
 import { Router } from "express";
 import pool from "../utils/db.js";
+import { getWeek } from "../utils/weeks.js";
 
 const router = Router();
 
@@ -31,7 +32,9 @@ router.post("/save-selections", async (req, res) => {
       .send({ error: true, message: "Fruit og veggie id not correct" });
   }
 
-  const selectionDate = date || new Date().toISOString().split("T")[0];
+  const weekId = getWeek(new Date(date || Date.now()));
+
+  // const selectionDate = date || new Date().toISOString().split("T")[0];
 
   const client = await pool.connect();
 
@@ -39,26 +42,26 @@ router.post("/save-selections", async (req, res) => {
     await client.query("START TRANSACTION");
 
     await client.query(
-      "DELETE FROM user_fruit_selections WHERE user_id = $1 AND selection_date = $2",
-      [userId, selectionDate]
+      "DELETE FROM user_fruit_selections WHERE user_id = $1 AND week_id = $2",
+      [userId, weekId]
     );
 
     await client.query(
-      "DELETE FROM user_vegetable_selections WHERE user_id = $1 AND selection_date = $2",
-      [userId, selectionDate]
+      "DELETE FROM user_vegetable_selections WHERE user_id = $1 AND week_id = $2",
+      [userId, weekId]
     );
 
     for (const fruitId of fruitIds) {
       await client.query(
-        "INSERT INTO user_fruit_selections (user_id, fruit_id, selection_date) VALUES ($1, $2, $3)",
-        [userId, fruitId, selectionDate]
+        "INSERT INTO user_fruit_selections (user_id, fruit_id, week_id) VALUES ($1, $2, $3)",
+        [userId, fruitId, weekId]
       );
     }
 
     for (const veggieId of veggieIds) {
       await client.query(
-        "INSERT INTO user_vegetable_selections (user_id, vegetable_id, selection_date) VALUES ($1, $2, $3)",
-        [userId, veggieId, selectionDate]
+        "INSERT INTO user_vegetable_selections (user_id, vegetable_id, week_id) VALUES ($1, $2, $3)",
+        [userId, veggieId, weekId]
       );
     }
 
@@ -68,7 +71,7 @@ router.post("/save-selections", async (req, res) => {
       success: true,
       message: "Your choices is now saved",
       data: {
-        date: selectionDate,
+        date: weekId,
         fruitCount: fruitIds.length,
         veggieCount: veggieIds.length,
         totalCount: fruitIds.length + veggieIds.length,
@@ -89,6 +92,18 @@ router.post("/save-selections", async (req, res) => {
   } finally {
     client.release();
   }
+});
+
+router.get("/current-week", (req, res) => {
+  try {
+    const now = new Date();
+    const weekId = getWeek(now);
+    res.send({ success: true, weekId });
+  } catch (error) {
+    console.error("Error while calculating current week:", error);
+    res.status(500).send({ error: true, message: "Could not determine the current week.",});
+  }
+
 });
 
 

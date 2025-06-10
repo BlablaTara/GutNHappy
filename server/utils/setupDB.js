@@ -34,9 +34,9 @@ async function setupDB() {
               id SERIAL PRIMARY KEY,
               user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
               fruit_id INTEGER NOT NULL REFERENCES fruits(id) ON DELETE CASCADE,
-              selection_date DATE NOT NULL,
+              week_id TEXT,
               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-              UNIQUE(user_id, fruit_id, selection_date)
+              UNIQUE(user_id, fruit_id, week_id)
           );`
     );
 
@@ -45,20 +45,19 @@ async function setupDB() {
               id SERIAL PRIMARY KEY,
               user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
               vegetable_id INTEGER NOT NULL REFERENCES vegetables(id) ON DELETE CASCADE,
-              selection_date DATE NOT NULL,
+              week_id TEXT,
               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-              UNIQUE(user_id, vegetable_id, selection_date)
+              UNIQUE(user_id, vegetable_id, week_id)
           );`
     );
 
 
-    //MÅSKE, MÅSKE IKKE. RÅD FRA CHAT.
     await pool.query(
-      `CREATE INDEX IF NOT EXISTS idx_user_fruit_date ON user_fruit_selections(user_id, selection_date);`
+      `CREATE INDEX IF NOT EXISTS idx_user_fruit_week ON user_fruit_selections(user_id, week_id);`
     );
 
     await pool.query(
-      `CREATE INDEX IF NOT EXISTS idx_user_veggie_date ON user_vegetable_selections(user_id, selection_date);`
+      `CREATE INDEX IF NOT EXISTS idx_user_veggie_week ON user_vegetable_selections(user_id, week_id);`
     );
     console.log('Created tables');
     

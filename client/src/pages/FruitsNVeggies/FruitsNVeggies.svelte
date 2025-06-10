@@ -13,6 +13,8 @@
 
     let selectedFood = null;
 
+    let currentWeekId = null;
+
     let query = "";
 
     let fruits = [];
@@ -31,6 +33,14 @@
 
     onMount(async () => {
         console.log("Fruits N Veggies route Mountet");
+
+        const weekResult = await fetchGet('/api/protected/current-week');
+        if (!weekResult.error && weekResult.weekId) {
+            currentWeekId = weekResult.weekId;
+        } else {
+            console.log("Kunne ikke hente current week fra server");
+            return;
+        }
         await Promise.all([loadFruits(), loadVeggies(), loadUserSelections()]);
     });
 
@@ -50,8 +60,7 @@
 
     async function loadUserSelections() {
         try {
-            const today = new Date().toISOString().split('T')[0];
-            const selections = await fetchGet(`/api/protected/user-selections?date=${today}`);
+            const selections = await fetchGet(`/api/protected/user-selections?week_id=${currentWeekId}`);
 
             if (!selections.error && selections.success) {
                 //opdaterer vores lokle ayyay med brugerens tidligere valg.
@@ -94,13 +103,19 @@
                 return;
             }
             
-            const today = new Date().toISOString().split('T')[0];
+            // const today = new Date().toISOString().split('T')[0];
             
+            // const result = await fetchPost('/api/protected/save-selections', {
+            //     fruitIds: selectedFruitIds,
+            //     veggieIds: selectedVeggieIds,
+            //     date: today
+            // });
+
             const result = await fetchPost('/api/protected/save-selections', {
                 fruitIds: selectedFruitIds,
                 veggieIds: selectedVeggieIds,
-                date: today
-            });
+                date: currentWeekId
+            })
             
             if (result.error) {
                 saveError = result.message || "An error occured trying to save your choices";
