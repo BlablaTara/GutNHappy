@@ -15,7 +15,7 @@ router.get("/user-selections", async (req, res) => {
 
     const dateParam = req.query.date;
     const date = dateParam ? new Date(dateParam) : new Date();
-    const weekId = getWeek(date); // F.eks. "2025-24"
+    const weekId = getWeek(date); 
 
     const fruitQuery = `
       SELECT f.id, f.name, f.image_url

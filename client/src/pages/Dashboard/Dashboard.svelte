@@ -4,6 +4,7 @@
     import { fetchGet } from "../../utils/fetch.js";
     import UserProcess from "../../components/UserProcess.svelte";
     import FoodBox from "../../components/FoodBox.svelte";
+    import { Link } from "svelte-routing";
 
     import Chart from 'chart.js/auto'
 
@@ -87,8 +88,6 @@
                 chart.update();
             }
 
-           //noSelectionsThisWeek = selectedFruits.length 
-
         } catch (error) {
             console.error("Unexpected error fetching weekly data:", error);
         }
@@ -124,7 +123,7 @@
     {#if selectedFruits.length === 0 && selectedVeggies.length === 0}
         <p>You haven't selected any fruits or vegetables yet</p>
         <div class="start">
-            <p>🌱Start your healthy journey <a class="start-link" href="/add-health">here!</a>🌱</p>
+            <p>🌱Start your healthy journey <Link class="start-link" to="/add-health">here!</Link>🌱</p>
         </div>
     {/if}
 

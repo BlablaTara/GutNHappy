@@ -26,13 +26,15 @@ router.post("/save-selections", async (req, res) => {
       .send({ error: true, message: "User not authenticated" });
   }
 
+  const weekId = date || getWeek(new Date());
+
   if (!Array.isArray(fruitIds) || !Array.isArray(veggieIds)) {
     return res
       .status(400)
       .send({ error: true, message: "Fruit og veggie id not correct" });
   }
 
-  const weekId = getWeek(new Date(date || Date.now()));
+  // const weekId = getWeek(new Date(date || Date.now()));
 
   // const selectionDate = date || new Date().toISOString().split("T")[0];
 

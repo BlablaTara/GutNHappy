@@ -4,6 +4,7 @@
     import { authStore } from "../../stores/authStore.js";
     import { fetchGet, fetchPost } from "../../utils/fetch.js";
     import { io } from "socket.io-client";
+    import { get } from "svelte/store";
     import SearchFruitsNVeggies from "../../components/SearchFruitsNVeggies.svelte";
     import ShowFoodModal from "../../components/ShowFoodModal.svelte";
 
@@ -33,6 +34,13 @@
 
     onMount(async () => {
         console.log("Fruits N Veggies route Mountet");
+
+        const auth = get(authStore);
+        if (!auth || !auth.isLoggedIn) {
+            console.log("AuthStore is not ready");
+            return;
+        }
+
 
         const weekResult = await fetchGet('/api/protected/current-week');
         if (!weekResult.error && weekResult.weekId) {
@@ -102,14 +110,6 @@
                 saveError = "You have to be logged";
                 return;
             }
-            
-            // const today = new Date().toISOString().split('T')[0];
-            
-            // const result = await fetchPost('/api/protected/save-selections', {
-            //     fruitIds: selectedFruitIds,
-            //     veggieIds: selectedVeggieIds,
-            //     date: today
-            // });
 
             const result = await fetchPost('/api/protected/save-selections', {
                 fruitIds: selectedFruitIds,
