@@ -2,11 +2,15 @@
     import { onMount } from "svelte";
     import { fetchGet } from "../../utils/fetch.js";
     import UserProcess from "../../components/UserProcess.svelte";
+    import { authStore } from "../../stores/authStore.js"
+    import { get } from "svelte/store";
     import { io } from "socket.io-client";
 
     let users = [];
     let socket;
     let currentWeek = "";
+
+    $: currentUser = get(authStore)?.user?.username;
 
     $: sortedUsers = Array.isArray(users) 
         ? [...users].sort((a, b) => {
@@ -15,6 +19,7 @@
         return totalB - totalA;
     })
     : [];
+
 
     async function getLeaderboard() {
         const result = await fetchGet("/api/protected/leaderboard")
@@ -53,9 +58,9 @@
     </h3>
 
     {#each sortedUsers as user, index}
-    <div class="ranking">
+    <div class="ranking {user.username === currentUser ? 'me' : ''}">
         <span class="medal">{index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}` }</span>
-        <UserProcess username={user.username} totalFruits={Number(user.totalfruits)} totalVeggies={Number(user.totalveggies)} />
+        <UserProcess username={user.username} totalFruits={Number(user.totalfruits)} totalVeggies={Number(user.totalveggies)} isCurrentUser={user.username === currentUser} />
 
     </div>
     {/each}

@@ -2,6 +2,7 @@
     export let username;
     export let totalFruits = 0;
     export let totalVeggies = 0;
+    export let isCurrentUser = false;
 
     $: fruits = Number(totalFruits);
     $: veggies = Number(totalVeggies);
@@ -13,7 +14,7 @@
 </script>
 
 <div class="user-process">
-    <p><strong>{username}</strong>: {total}/20</p>
+    <p class:is-me={isCurrentUser}><strong>{username}{isCurrentUser ? " (you)" : ""}</strong>: {total}/20</p>
     <div class="progress-container">
         <div class="fruit-bar" style="width: {total > 0 ? (fruits / total) * progress : 0}%"></div>
         <div class="veggie-bar" style="width: {total > 0 ? (veggies / total) * progress : 0}%"></div>
@@ -35,12 +36,16 @@
     }
 
     .fruit-bar {
-        background-color: #ffa726;
+        background-color: #f6c02a;
         height: 100%;
     }
 
     .veggie-bar {
-        background-color: #66bb6a;
+        background-color: #b7d255;
         height: 100%;
+    }
+    .is-me {
+        font-size: 1.6rem;
+        color: rgb(40, 40, 40);
     }
 </style>

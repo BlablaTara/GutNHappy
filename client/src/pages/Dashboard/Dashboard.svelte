@@ -30,12 +30,12 @@
             {
                 label: 'Fruits',
                 data: [],
-                backgroundColor: '#ffa726'
+                backgroundColor: '#f6c02a'
             },
             {
                 label: 'Veggies',
                 data: [],
-                backgroundColor: '#66bb6a'
+                backgroundColor: '#b7d255'
             }
         ]
     };
@@ -203,6 +203,7 @@
 
 
 <style>
+
     .start {
         text-align: center;
         font-size: 1.5rem;
