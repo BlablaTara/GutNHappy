@@ -4,6 +4,7 @@
     import { fetchGet } from "../../utils/fetch.js";
     import UserProcess from "../../components/UserProcess.svelte";
     import FoodBox from "../../components/FoodBox.svelte";
+    import ShowFoodModal from "../../components/ShowFoodModal.svelte";
     import { Link } from "svelte-routing";
 
     import Chart from 'chart.js/auto'
@@ -18,6 +19,7 @@
     let summary = [];
     let totalFruits = 0;
     let totalVeggies = 0;
+    let selectedFood = null;
 
     let canvas;
     let chart;
@@ -113,6 +115,9 @@
                 selectedVeggies = selectionsResult.data.vegetables || [];
             }
 
+            console.log("Selected Fruits:", selectedFruits);
+            console.log("Selected Veggies:", selectedVeggies);
+
             console.log("Weekly data", weeklyArray); //LoG
 
             if (chart) {
@@ -152,6 +157,7 @@
 <div class="container">
         
     <h1>Welcome {username}</h1>
+
     {#if selectedFruits.length === 0 && selectedVeggies.length === 0}
         <p>You haven't selected any fruits or vegetables yet</p>
         <div class="start">
@@ -177,20 +183,24 @@
         <h2>This weeks intake:</h2>
         <div class="selected-grid">
             {#each selectedFruits as fruit}
-                <FoodBox food={fruit} selected={true} showCheckmark={false} onToggle={() => {}} />
+                <FoodBox food={fruit} selected={true} showCheckmark={false} highlightSelected={false} onToggle={() => {}} onInfoClick={(food) => selectedFood = food}  />
             {/each}
             {#each selectedVeggies as veggie}
-                <FoodBox food={veggie} selected={true} showCheckmark={false} onToggle={() => {}} />
+                <FoodBox food={veggie} selected={true} showCheckmark={false} highlightSelected={false} onToggle={() => {}} onInfoClick={(food) => selectedFood = food}  />
             {/each}            
 
         </div>
     {:else}
     <p>You haven't added any fruits or vegetables for this week yet.</p>
+    {/if}
 
+    {#if selectedFood}
+        <ShowFoodModal food={selectedFood} on:close={() => selectedFood = null} />
     {/if}
 
 
 </div>
+
 
 <style>
     .start {

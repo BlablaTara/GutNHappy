@@ -42,6 +42,11 @@
         width: 150px;
         border-radius: 0.5rem;
         margin-bottom: 1rem;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.4);
+    }
+    h2 {
+      margin-top: 0px;
+      font-size: 2rem;
     }
 
     h3 {
@@ -58,7 +63,7 @@
         z-index: 1000;
     }
     .modal-content {
-        background: rgb(230, 227, 214);
+        background: rgb(232, 229, 213);
         padding: 2rem;
         border-radius: 1rem;
         max-width: 400px;
@@ -70,7 +75,8 @@
         position: absolute;
         top: 10px;
         right: 10px;
-        background: #eee;
+        background: #f3f3f3;
+        color: #666;
         border: none;
         font-size: 1.2rem;
         cursor: pointer;
@@ -85,6 +91,7 @@
       line-height: 1.4;
       background-color: #ffffff;
       border-radius: 0.75rem;
+      box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.4);
     }
 
 

@@ -4,10 +4,11 @@
   export let onToggle;
   export let onInfoClick = (food) => {};
   export let showCheckmark = true;
+  export let highlightSelected = true;
 </script>
 
 <div
-  class="box {selected ? 'selected' : ''}"
+  class="box { selected ? (highlightSelected ? 'selected' : 'no-highlight') : ''}"
   on:click={() => onToggle(food)}
   role="button"
   tabindex="0"
@@ -63,6 +64,12 @@
     background-color: #EAFFEA;
 
   }
+
+  .box.no-highlight.selected {
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.12);
+    background-color: rgb(255, 255, 255);
+  }
+
   .image-wrapper {
     position: relative;
   }

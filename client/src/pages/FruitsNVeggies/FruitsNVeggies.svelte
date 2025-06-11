@@ -198,6 +198,7 @@
         <div class="grid">
             {#each filteredVeggies as veg}
             <FoodBox 
+                highlightSelected={true}
                 food={veg} 
                 selected={selectedVeggieIds.includes(veg.id)} 
                 onToggle={toggleVeggie}

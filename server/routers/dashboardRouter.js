@@ -18,14 +18,14 @@ router.get("/user-selections", async (req, res) => {
     const weekId = getWeek(date); 
 
     const fruitQuery = `
-      SELECT f.id, f.name, f.image_url
+      SELECT f.id, f.name, f.image_url, f.health_benefits
       FROM user_fruit_selections ufs
       JOIN fruits f ON ufs.fruit_id = f.id
       WHERE ufs.user_id = $1 AND ufs.week_id = $2
     `;
 
     const veggieQuery = `
-      SELECT v.id, v.name, v.image_url
+      SELECT v.id, v.name, v.image_url, v.health_benefits
       FROM user_vegetable_selections uvs
       JOIN vegetables v ON uvs.vegetable_id = v.id
       WHERE uvs.user_id = $1 AND uvs.week_id = $2
