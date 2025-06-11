@@ -42,22 +42,24 @@
 
 </script>
 
-<h1>Leaderboard</h1>
+<div class="container">
+    <h1>Leaderboard</h1>
 
-<h2 class="rank-header">
-    Top eaters for gut diversity this week:
-</h2>
-<h3 class="show-week">
-    Week: {currentWeek.split("-") [1]}
-</h3>
+    <h2 class="rank-header">
+        Top eaters for gut diversity this week:
+    </h2>
+    <h3 class="show-week">
+        Week: {currentWeek.split("-") [1]}
+    </h3>
 
-{#each sortedUsers as user, index}
-<div class="ranking">
-    <span class="medal">{index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}` }</span>
-    <UserProcess username={user.username} totalFruits={Number(user.totalfruits)} totalVeggies={Number(user.totalveggies)} />
+    {#each sortedUsers as user, index}
+    <div class="ranking">
+        <span class="medal">{index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}` }</span>
+        <UserProcess username={user.username} totalFruits={Number(user.totalfruits)} totalVeggies={Number(user.totalveggies)} />
 
+    </div>
+    {/each}
 </div>
-{/each}
 
 <style>
     .rank-header {

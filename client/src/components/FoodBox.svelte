@@ -3,6 +3,7 @@
   export let selected = false;
   export let onToggle;
   export let onInfoClick = (food) => {};
+  export let showCheckmark = true;
 </script>
 
 <div
@@ -22,7 +23,7 @@
 
   <div class="image-wrapper">
     <img src={food.image_url} alt={food.name} />
-    {#if selected}
+    {#if selected && showCheckmark}
       <div class="checkmark">✔</div>
     {/if}
 
@@ -40,23 +41,25 @@
   }
   .box {
     width: 120px;
-    border: 2px solid #ccc;
+    /* border: 2px solid #ccc; */
     border-radius: 1rem;
     padding: 1rem;
     text-align: center;
     cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
     position: relative;
-    background-color: rgb(254, 251, 238);
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.12);
     
   }
   .box:hover {
-    border-color: #666;
-    box-shadow: 0 px 6px rgba(0, 0, 0, 0.1);
+    /* border-color: #9f9f9f;
+    box-shadow: 4px 6px rgba(0, 0, 0, 0.1); */
+    transform: scale(1.05);
   }
   .box.selected {
     border-color: #4CAF50;
-    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+    box-shadow: 0px 0px 8px rgba(76, 175, 80, 0.2);
     background-color: #EAFFEA;
 
   }
@@ -70,7 +73,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     color: #4CAF50;
-    font-size: 6rem;
+    font-size: 9rem;
     font-weight: bold;
   }
     .info-icon {
@@ -81,9 +84,9 @@
     right: 6px;
     font-size: 0.8rem;
     font-weight: bold;
-    color: #666;
+    color: #8d8d8d;
     padding: 0.1rem 0.4rem;
-    border: 2px solid #666;
+    border: 2px solid #8d8d8d;
     border-radius: 50%;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     z-index: 20;

@@ -76,3 +76,16 @@ button:focus-visible {
     background-color: #ffffff;
   }
 }
+
+.container {
+  margin-left: 1rem;
+  margin-right: 1rem;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  padding-left: 5rem;
+  padding-right: 5rem;
+  padding-bottom: 2rem;
+  background-color: #fffaf0;
+  border-radius: 20px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}

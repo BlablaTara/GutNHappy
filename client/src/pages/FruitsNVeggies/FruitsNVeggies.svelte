@@ -150,71 +150,74 @@
     }
 </script>
 
-<h1>Fruits 'N Veggies</h1>
-<p>Choose the fruits and greens you ate today.</p>
+<div class="container">
 
-{#if saveMessage}
-    <div class="success-message">
-        {saveMessage}
+    <h1>Add health to your gut</h1>
+    <p>Choose the fruits and greens you ate today.</p>
+
+    {#if saveMessage}
+        <div class="success-message">
+            {saveMessage}
+        </div>
+    {/if}
+
+    {#if saveError}
+        <div class="error-message">
+            {saveError}
+        </div>
+    {/if}
+
+    <SearchFruitsNVeggies 
+        {fruits}
+        {veggies}
+        bind:filteredFruits
+        bind:filteredVeggies
+        bind:query 
+    />
+
+    <p class="count-display">
+        Today you ate: {selectedFruitIds.length + selectedVeggieIds.length} different types of fruits and vegetables
+    </p>
+
+    {#if filteredFruits.length > 0 }
+        <h2>Fruits</h2>
+        <div class="grid">
+            {#each filteredFruits as fruit}
+            <FoodBox 
+                food={fruit} 
+                selected={selectedFruitIds.includes(fruit.id)} 
+                onToggle={toggleFruit}
+                onInfoClick={(food) => selectedFood = food} 
+            />
+            {/each}    
+        </div>
+    {/if}
+
+    {#if filteredVeggies.length > 0}
+        <h2>Veggies</h2>
+        <div class="grid">
+            {#each filteredVeggies as veg}
+            <FoodBox 
+                food={veg} 
+                selected={selectedVeggieIds.includes(veg.id)} 
+                onToggle={toggleVeggie}
+                onInfoClick={(food) => selectedFood = food}  
+            />
+            {/each}
+        </div>
+    {/if}
+
+    {#if selectedFood}
+    <ShowFoodModal food={selectedFood} on:close={() => selectedFood = null} />
+    {/if}
+
+
+
+    <div class="save">
+        <button class="save-button" on:click={saveSelections} disabled={isSaving}>
+            {isSaving ? 'Saving...' : 'Save my choices'}
+        </button>
     </div>
-{/if}
-
-{#if saveError}
-    <div class="error-message">
-        {saveError}
-    </div>
-{/if}
-
-<SearchFruitsNVeggies 
-    {fruits}
-    {veggies}
-    bind:filteredFruits
-    bind:filteredVeggies
-    bind:query 
-/>
-
-<p class="count-display">
-    Today you ate: {selectedFruitIds.length + selectedVeggieIds.length} different types of fruits and vegetables
-</p>
-
-{#if filteredFruits.length > 0 }
-    <h2>Fruits</h2>
-    <div class="grid">
-        {#each filteredFruits as fruit}
-        <FoodBox 
-            food={fruit} 
-            selected={selectedFruitIds.includes(fruit.id)} 
-            onToggle={toggleFruit}
-            onInfoClick={(food) => selectedFood = food} 
-        />
-        {/each}    
-    </div>
-{/if}
-
-{#if filteredVeggies.length > 0}
-    <h2>Veggies</h2>
-    <div class="grid">
-        {#each filteredVeggies as veg}
-        <FoodBox 
-            food={veg} 
-            selected={selectedVeggieIds.includes(veg.id)} 
-            onToggle={toggleVeggie}
-            onInfoClick={(food) => selectedFood = food}  
-        />
-        {/each}
-    </div>
-{/if}
-
-{#if selectedFood}
-  <ShowFoodModal food={selectedFood} on:close={() => selectedFood = null} />
-{/if}
-
-
-
-<div class="save">
-    <button class="save-button" on:click={saveSelections} disabled={isSaving}>
-        {isSaving ? 'Saving...' : 'Save my choices'}
-    </button>
 </div>
 
 <style>

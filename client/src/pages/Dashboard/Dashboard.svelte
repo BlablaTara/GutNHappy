@@ -7,6 +7,9 @@
     import { Link } from "svelte-routing";
 
     import Chart from 'chart.js/auto'
+    import annotationPlugin from 'chartjs-plugin-annotation';
+
+    Chart.register(annotationPlugin);
 
 
     let username = '';
@@ -35,12 +38,41 @@
         ]
     };
 
+    let maxYValue = Math.max(
+        20,
+        ...chartData.datasets[0].data,
+        ...chartData.datasets[1].data
+    );
+
     let chartOptions = {
         responsive: true,
-        plugins: { legend: { position: "top" } },
+        maintainAspectRatio: false,
+        plugins: { legend: { position: "top" },
+            annotation: {
+                annotations: {
+                    goalLine: {
+                        type: 'line',
+                        yMin: 10,
+                        yMax: 10,
+                        borderColor: 'rgba(0, 0, 0, 0.5)',
+                        borderWidth: 2,
+                        borderDash: [6,6],
+                        label: {
+                            enabled: true,
+                            content: 'Goal halfway (10)',
+                            position: 'end',
+                            backgroundColor: 'rgbs(0, 0, 0, 0.7)',
+                            color: '#fff',
+                            font: {
+                                style: 'italic'
+                            }
+                        }
+                    }
+                }
+            } },
         scales: {
             x: { stacked: true },
-            y: { stacked: true, beginAtZero: true }
+            y: { stacked: true, beginAtZero: true, max: maxYValue }
         }
     };
 
@@ -117,7 +149,7 @@
 
 </script>
 
-<div>
+<div class="container">
         
     <h1>Welcome {username}</h1>
     {#if selectedFruits.length === 0 && selectedVeggies.length === 0}
@@ -145,10 +177,10 @@
         <h2>This weeks intake:</h2>
         <div class="selected-grid">
             {#each selectedFruits as fruit}
-                <FoodBox food={fruit} selected={true} onToggle={() => {}} />
+                <FoodBox food={fruit} selected={true} showCheckmark={false} onToggle={() => {}} />
             {/each}
             {#each selectedVeggies as veggie}
-                <FoodBox food={veggie} selected={true} onToggle={() => {}} />
+                <FoodBox food={veggie} selected={true} showCheckmark={false} onToggle={() => {}} />
             {/each}            
 
         </div>
