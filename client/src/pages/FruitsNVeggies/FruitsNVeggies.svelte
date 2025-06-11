@@ -71,7 +71,6 @@
             const selections = await fetchGet(`/api/protected/user-selections?week_id=${currentWeekId}`);
 
             if (!selections.error && selections.success) {
-                //opdaterer vores lokle ayyay med brugerens tidligere valg.
                 selectedFruitIds = selections.data.fruits.map(fruit => fruit.id);
                 selectedVeggieIds = selections.data.vegetables.map(veg => veg.id);
             }
@@ -142,7 +141,6 @@
         } finally {
             isSaving = false;
             
-            // Fade ud besked efter 5 sekunder
             if (saveMessage) {
                 setTimeout(() => {
                     saveMessage = "";

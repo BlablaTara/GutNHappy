@@ -34,10 +34,6 @@ router.post("/save-selections", async (req, res) => {
       .send({ error: true, message: "Fruit og veggie id not correct" });
   }
 
-  // const weekId = getWeek(new Date(date || Date.now()));
-
-  // const selectionDate = date || new Date().toISOString().split("T")[0];
-
   const client = await pool.connect();
 
   try {
