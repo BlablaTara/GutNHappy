@@ -59,13 +59,16 @@ import protectedRouter from "./routers/protectedRouter.js";
 import fruitsNVeggiesRouter from "./routers/fruitsNVeggiesRouter.js";
 import dashboardRouter from "./routers/dashboardRouter.js";
 import leaderboardRouter from "./routers/leaderboardRouter.js";
+import profileRouter from "./routers/profileRouter.js"
 
 app.use("/api", authRouter);
+
 app.use("/api/protected", 
 	protectedRouter,
 	fruitsNVeggiesRouter,
 	dashboardRouter,
-	leaderboardRouter
+	leaderboardRouter,
+  profileRouter
 );
 
 

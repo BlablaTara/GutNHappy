@@ -40,12 +40,10 @@
          <Link to="/dashboard">Dashboard</Link>
          <Link to="/add-health">Add Health</Link>
          <Link to="/leaderboard">Leaderboard</Link>
+         <Link to="/profile">Profile</Link>
          <button on:click={handleLogout}>Logout</button>
         {:else if $location.pathname === '/' || $location.pathname === '/login' || $location.pathname === '/about'}
             <Link to="/login">Login</Link>
-            <Link to="/about">About</Link>
-
-
         {/if}        
     </div>
 </nav>

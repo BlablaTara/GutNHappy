@@ -159,8 +159,8 @@
     <h1>🌟Welcome {username}🌟</h1>
 
     {#if selectedFruits.length === 0 && selectedVeggies.length === 0}
-        <p>You haven't selected any fruits or vegetables yet</p>
         <div class="start">
+            <p>You haven't selected any fruits or vegetables yet</p>
             <p>🌱Start your healthy journey <Link class="start-link" to="/add-health">here!</Link>🌱</p>
         </div>
     {/if}

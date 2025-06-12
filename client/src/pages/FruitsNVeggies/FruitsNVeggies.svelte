@@ -5,6 +5,8 @@
     import { fetchGet, fetchPost } from "../../utils/fetch.js";
     import { io } from "socket.io-client";
     import { get } from "svelte/store";
+    import { navigate } from "svelte-routing";
+    import toastr from "toastr";
     import SearchFruitsNVeggies from "../../components/SearchFruitsNVeggies.svelte";
     import ShowFoodModal from "../../components/ShowFoodModal.svelte";
 
@@ -29,8 +31,6 @@
     let selectedVeggieIds = [];
 
     let isSaving = false;
-    let saveMessage = ""; //virkelig denne?? måske ikke
-    let saveError = ""; // og denne behøves måske heller ikke. og eller error som den adnen
 
     onMount(async () => {
         console.log("Fruits N Veggies route Mountet");
@@ -40,7 +40,6 @@
             console.log("AuthStore is not ready");
             return;
         }
-
 
         const weekResult = await fetchGet('/api/protected/current-week');
         if (!weekResult.error && weekResult.weekId) {
@@ -102,11 +101,9 @@
     async function saveSelections() {
         try {
             isSaving = true;
-            saveMessage = "";
-            saveError = "";
             
             if (!$authStore.isLoggedIn) {
-                saveError = "You have to be logged";
+                toastr.error = "You must be logged in.";
                 return;
             }
 
@@ -117,35 +114,32 @@
             })
             
             if (result.error) {
-                saveError = result.message || "An error occured trying to save your choices";
+                toastr.error("Sorry. An error occured trying to save your choices. Try again")
             } else {
-                saveMessage = result.message || "Your choices are saved";
-                const total = result.data.totalCount;
-                const target = 20;
+                toastr.success("Succesfully saved! - redirecting...")
+                // const total = result.data.totalCount;
+                // const target = 20;
                 
-                if (total >= target) {
-                    saveMessage += ` Congratulations! You reached your goal on ${target} different fruits and veggies for this week!`;
-                } else {
-                    saveMessage += ` Du har valgt ${total} ud af ${target} forskellige frugt og grønt i dag.`;
-                }
+                // if (total >= target) {
+                //     saveMessage += ` Congratulations! You reached your goal on ${target} different fruits and veggies for this week!`;
+                // } else {
+                //     saveMessage += ` Du har valgt ${total} ud af ${target} forskellige frugt og grønt i dag.`;
+                // }
                 
                 socket.emit("new-selection", {
                     type: "weeklyUpdate",
                     totalFruits: selectedFruitIds.length,
                     totalVeggies: selectedVeggieIds.length
                 });
+
+                setTimeout(() => {
+                navigate("/dashboard");
+                }, 1500);
             }
         } catch (error) {
-            console.error("Fejl ved gemning:", error);
-            saveError = "Der opstod en uventet fejl";
+            toastr.error("Unexpected error while saving.");
         } finally {
             isSaving = false;
-            
-            if (saveMessage) {
-                setTimeout(() => {
-                    saveMessage = "";
-                }, 5000);
-            }
         }
     }
 </script>
@@ -154,18 +148,6 @@
 
     <h1>Add health to your gut</h1>
     <h2>Choose the fruits and greens you ate today.</h2>
-
-    {#if saveMessage}
-        <div class="success-message">
-            {saveMessage}
-        </div>
-    {/if}
-
-    {#if saveError}
-        <div class="error-message">
-            {saveError}
-        </div>
-    {/if}
 
     <div class="searchBar">
         <SearchFruitsNVeggies 
@@ -265,27 +247,6 @@
     .save-button:disabled {
         background-color: #cccccc;
         cursor: not-allowed;
-    }
-    
-    .count-display {
-        margin-top: 1rem;
-        font-size: 1.1rem;
-    }
-    
-    .success-message {
-        background-color: #DFF2BF;
-        color: #4F8A10;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 1rem;
-    }
-    
-    .error-message {
-        background-color: #FFBABA;
-        color: #D8000C;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 1rem;
     }
 
 </style>

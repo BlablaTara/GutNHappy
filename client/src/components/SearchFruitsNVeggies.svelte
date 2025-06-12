@@ -8,7 +8,7 @@
 
     export let query = '';
 
-    $: if (query.trim().length >= 2) {
+    $: if (query.trim().length >= 1) {
         const lowerQuery = query.trim().toLowerCase();
 
         filteredFruits = fruits.filter(fruit => 
@@ -38,7 +38,6 @@
         width: 50%;
         font-size: 1rem;
         box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-        /* border-color: lightgray; */
         border-width: 3px;
     }
 

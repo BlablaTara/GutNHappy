@@ -2,7 +2,7 @@
     import { Router, Route } from "svelte-routing";
     import Home from "./pages/Home/Home.svelte";
     import Dashboard from "./pages/Dashboard/Dashboard.svelte";
-    import About from "./pages/About/About.svelte";
+    import Profile from "./pages/Profile/Profile.svelte";
     import FruitsNVeggies from "./pages/FruitsNVeggies/FruitsNVeggies.svelte";
     import Leaderboard from "./pages/Leaderboard/Leaderboard.svelte";
 
@@ -13,6 +13,7 @@
     import ResetPassword from "./components/ResetPassword.svelte";
 
     import "./css/navigation.css"
+
 
 
     export let url;
@@ -44,14 +45,14 @@
         <Route path="/leaderboard">
             <PrivateRoute component={Leaderboard}/>
         </Route>
-        <Route path="/about"><About/></Route>
+        <Route path="/profile">
+            <PrivateRoute component={Profile}/>
+        </Route>
+
         <Route path="/login"><FlipCard/></Route>
 
-        
         <Route path="/forgot-password"><ForgotPassword/></Route>
         <Route path="/reset-password"><ResetPassword/></Route>
-
-
 
     </div>
 
