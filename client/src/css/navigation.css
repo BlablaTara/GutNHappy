@@ -13,7 +13,7 @@
 }
 
 .navbar-left img {
-  height: 70px;
+  height: 90px;
 }
 
 .navbar-right {
@@ -48,3 +48,40 @@
 .navbar-right button {
   color: #4CAF50;
 }
+
+.nav-bg {
+  position: absolute;
+  z-index: 0;
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.bg-nav1 {
+  top: 2px;
+  left: 10px;
+  width: 25px;
+  height: 25px;
+  background-image: url('/bg1.png');
+  transform: rotate(8deg);
+}
+
+.bg-nav2 {
+  top: 5px;
+  right: 50px;
+  width: 30px;
+  height: 30px;
+  background-image: url('/bg2.png');
+  transform: rotate(-6deg);
+}
+
+.bg-nav3 {
+  top: 27%;
+  right: 44%;
+  width: 20px;
+  height: 20px;
+  background-image: url('/bg3.png');
+  transform: rotate(14deg);
+}
+

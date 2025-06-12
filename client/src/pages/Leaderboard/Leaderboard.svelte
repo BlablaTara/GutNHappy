@@ -51,7 +51,7 @@
     <h1>Leaderboard</h1>
 
     <h2 class="rank-header">
-        Top eaters for gut diversity this week:
+        🌟Top eaters for gut diversity this week🌟
     </h2>
     <h3 class="show-week">
         Week: {currentWeek.split("-") [1]}
@@ -67,6 +67,9 @@
 </div>
 
 <style>
+    h2 {
+        text-align: center;
+    }
     .rank-header {
         font-size:2rem;
         margin-bottom: 1rem;

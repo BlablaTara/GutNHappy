@@ -23,6 +23,7 @@
 </div>
 
 <style>
+
     .user-process {
         margin-bottom: 1rem;
     }
@@ -46,6 +47,6 @@
     }
     .is-me {
         font-size: 1.6rem;
-        color: rgb(40, 40, 40);
+        color: #61b2e3;
     }
 </style>

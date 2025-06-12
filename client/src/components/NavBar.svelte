@@ -25,6 +25,11 @@
 </script>
 
 <nav class="navbar">
+
+    <div class="nav-bg bg-nav1"></div>
+    <div class="nav-bg bg-nav2"></div>
+    <div class="nav-bg bg-nav3"></div>
+
     <div class="navbar-left">
         <Link to="/" class="logo">
             <img src="/gnh_logo.png" alt="Logo" />

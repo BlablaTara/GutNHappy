@@ -153,7 +153,7 @@
 <div class="container">
 
     <h1>Add health to your gut</h1>
-    <p>Choose the fruits and greens you ate today.</p>
+    <h2>Choose the fruits and greens you ate today.</h2>
 
     {#if saveMessage}
         <div class="success-message">
@@ -167,17 +167,22 @@
         </div>
     {/if}
 
-    <SearchFruitsNVeggies 
-        {fruits}
-        {veggies}
-        bind:filteredFruits
-        bind:filteredVeggies
-        bind:query 
-    />
+    <div class="searchBar">
+        <SearchFruitsNVeggies 
+            {fruits}
+            {veggies}
+            bind:filteredFruits
+            bind:filteredVeggies
+            bind:query 
+        />
+    </div>
 
-    <p class="count-display">
-        Today you ate: {selectedFruitIds.length + selectedVeggieIds.length} different types of fruits and vegetables
-    </p>
+    <div class="save">
+        <button class="save-button" on:click={saveSelections} disabled={isSaving}>
+            {isSaving ? 'Saving...' : 'Save my choices'}
+        </button>
+    </div>
+
 
     {#if filteredFruits.length > 0 }
         <h2>Fruits</h2>
@@ -213,17 +218,17 @@
     {/if}
 
 
-
-    <div class="save">
-        <button class="save-button" on:click={saveSelections} disabled={isSaving}>
-            {isSaving ? 'Saving...' : 'Save my choices'}
-        </button>
-    </div>
 </div>
 
 <style>
     h2 {
         text-align: center;
+    }
+
+    .searchBar {
+        display: flex;
+        justify-content: center;
+        margin: 1rem 0 2rem;
     }
     .grid {
         display: flex;
@@ -242,17 +247,19 @@
     
     .save-button {
         padding: 0.75rem 1.5rem;
-        background-color: #4CAF50;
+        background-color: #fd8097;
         color: white;
         border: none;
-        border-radius: 10px;
-        font-size: 1rem;
+        border-radius: 15px;
+        font-size: 1.5rem;
+        font-weight: bold;
         cursor: pointer;
         transition: background-color 0.3s;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     }
     
     .save-button:hover {
-        background-color: #45a049;
+        background-color: #e65670;
     }
     
     .save-button:disabled {
@@ -280,4 +287,5 @@
         border-radius: 5px;
         margin-bottom: 1rem;
     }
+
 </style>

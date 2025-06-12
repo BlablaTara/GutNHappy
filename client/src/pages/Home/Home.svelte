@@ -8,11 +8,12 @@
 </div>
 
 <style>
-      .home {
+  
+  .home {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 2rem;
+    padding-top: 5rem;
   }
 
   .home-image {

@@ -19,6 +19,15 @@
 
 </script>
 
+<div class="bg-image bg1"></div>
+<div class="bg-image bg2"></div>
+<div class="bg-image bg3"></div>
+<div class="bg-image bg4"></div>
+<div class="bg-image bg5"></div>
+<div class="bg-image bg6"></div>
+<div class="bg-image bg7"></div>
+<div class="bg-image bg8"></div>
+
 <Router {url}>
 
     <NavBar />
