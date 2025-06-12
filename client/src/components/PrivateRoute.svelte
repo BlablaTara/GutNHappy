@@ -1,31 +1,31 @@
 <script>
-    import { onMount } from "svelte";
-    import { navigate } from "svelte-routing";
-    import { authStore } from "../stores/authStore.js";
-    import { fetchGet } from "../utils/fetch.js";
+  import { onMount } from "svelte";
+  import { navigate } from "svelte-routing";
 
-    export let component;
+  import { authStore } from "../stores/authStore.js";
+  import { fetchGet } from "../utils/fetch.js";
 
-    let loading = true;
+  export let component;
 
-    onMount(async () => {        
-        authStore.set({ isLoggedIn: false, user: null, loading: true });
-        
-        const result = await fetchGet("/api/protected");
+  let loading = true;
 
-        if (result.error || !result.isLoggedIn) {
-            authStore.set({ isLoggedIn: false, user: null, loading: false });
-            navigate("/login");
-        } else {
-            authStore.set({ isLoggedIn: true, user: result.user, loading: false });
-        }
-        loading = false;
-    });
+  onMount(async () => {
+    authStore.set({ isLoggedIn: false, user: null, loading: true });
 
+    const response = await fetchGet("/api/protected");
+
+    if (response.error || !response.isLoggedIn) {
+      authStore.set({ isLoggedIn: false, user: null, loading: false });
+      navigate("/login");
+    } else {
+      authStore.set({ isLoggedIn: true, user: response.user, loading: false });
+    }
+    loading = false;
+  });
 </script>
 
 {#if loading}
-    <p>Loading...</p>
+  <p>Loading...</p>
 {:else if $authStore.isLoggedIn}
-    <svelte:component this={component} />
-{/if}   
+  <svelte:component this={component} />
+{/if}

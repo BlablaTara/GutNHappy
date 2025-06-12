@@ -8,30 +8,31 @@
 </script>
 
 <div
-  class="box { selected ? (highlightSelected ? 'selected' : 'no-highlight') : ''}"
+  class="box {selected
+    ? highlightSelected
+      ? 'selected'
+      : 'no-highlight'
+    : ''}"
   on:click={() => onToggle(food)}
   role="button"
   tabindex="0"
-  on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && onToggle(food)}
+  on:keydown={(e) => (e.key === "Enter" || e.key === " ") && onToggle(food)}
 >
-
   <button
     type="button"
     class="info-icon"
     on:click|stopPropagation={() => onInfoClick(food)}
-    aria-label="Show info about this food"
-  >?</button>
+    aria-label="Show info about this food">?</button
+  >
 
   <div class="image-wrapper">
     <img src={food.image_url} alt={food.name} />
     {#if selected && showCheckmark}
       <div class="checkmark">✔</div>
     {/if}
-
   </div>
   <p>{food.name}</p>
 </div>
-
 
 <style>
   img {
@@ -40,50 +41,50 @@
     object-fit: cover;
     border-radius: 0.5rem;
   }
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
   .box {
     width: 120px;
-    /* border: 2px solid #ccc; */
     border-radius: 1rem;
     padding: 1rem;
     text-align: center;
     cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s,
+      transform 0.2s;
     position: relative;
     background-color: rgb(255, 255, 255);
     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.12);
-    
   }
   .box:hover {
-    /* border-color: #9f9f9f;
-    box-shadow: 4px 6px rgba(0, 0, 0, 0.1); */
     transform: scale(1.05);
   }
   .box.selected {
-    border-color: #4CAF50;
+    border-color: #4caf50;
     box-shadow: 0px 0px 8px rgba(76, 175, 80, 0.2);
-    background-color: #EAFFEA;
-
+    background-color: #eaffea;
   }
-
   .box.no-highlight.selected {
     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.12);
     background-color: rgb(255, 255, 255);
   }
-
   .image-wrapper {
     position: relative;
   }
-
   .checkmark {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: #4CAF50;
+    color: #4caf50;
     font-size: 9rem;
     font-weight: bold;
   }
-    .info-icon {
+  .info-icon {
     all: unset;
     cursor: pointer;
     position: absolute;
@@ -97,10 +98,5 @@
     border-radius: 50%;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     z-index: 20;
-  }
-  p {
-    margin: 0;
-    font-size: 0.95rem;
-    font-weight: 500;
   }
 </style>
