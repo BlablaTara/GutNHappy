@@ -59,7 +59,8 @@
 
     {#each sortedUsers as user, index}
     <div class="ranking {user.username === currentUser ? 'me' : ''}">
-        <span class="medal">{index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}` }</span>
+        <span class="medal {index > 2 ? 'small-medal' : ''}">
+            {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}.` }</span>
         <UserProcess username={user.username} totalFruits={Number(user.totalfruits)} totalVeggies={Number(user.totalveggies)} isCurrentUser={user.username === currentUser} />
 
     </div>
@@ -98,5 +99,9 @@
         width: 4rem;
         text-align: center;
         margin-top: 10px;
+    }
+    .small-medal {
+        font-size: 2rem;
+        width: 4rem;
     }
 </style>

@@ -23,7 +23,7 @@ router.get("/profile", async (req, res) => {
     }
 });
 
-router.delete("profile", async (req, res) => {
+router.delete("/profile", async (req, res) => {
     try {
         const { id } = req.session.user;
 
