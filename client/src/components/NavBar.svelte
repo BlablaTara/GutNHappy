@@ -9,12 +9,11 @@
   const location = useLocation();
 
   onMount(async () => {
-    console.log("NavBar route Mountet");
-    const response = await fetchGet("/api/protected");
-    if (response.error || !response.data) {
+    const authResult = await fetchGet("/api/protected");
+    if (authResult.error || !authResult.data) {
       authStore.set({ isLoggedIn: false, user: null, loading: false });
     } else {
-      authStore.set({ isLoggedIn: true, user: response.user, loading: false });
+      authStore.set({ isLoggedIn: true, user: authResult.user, loading: false });
     }
   });
 

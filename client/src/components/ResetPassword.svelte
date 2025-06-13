@@ -15,13 +15,13 @@
       return;
     }
 
-    const response = await fetchPost("/api/reset-password", {
+    const resetResult = await fetchPost("/api/reset-password", {
       token,
       newPassword,
     });
 
-    if (response.error) {
-      toastr.error(response.error);
+    if (resetResult.error) {
+      toastr.error(resetResult.error);
     } else {
       toastr.success("Password has been reset! - redirecting...");
       setTimeout(() => {

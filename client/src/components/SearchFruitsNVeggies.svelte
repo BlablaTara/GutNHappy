@@ -1,11 +1,11 @@
 <script>
+  export let query = "";
+
   export let fruits = [];
   export let veggies = [];
 
   export let filteredFruits = [];
   export let filteredVeggies = [];
-
-  export let query = "";
 
   $: if (query.trim().length >= 1) {
     const trimmedQuery = query.trim().toLowerCase();

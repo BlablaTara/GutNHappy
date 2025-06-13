@@ -1,7 +1,6 @@
-import pool from './db.js';
+import pool from "./db.js";
 
 async function seedDB() {
-  
   await pool.query(
     `INSERT INTO fruits (name, image_url, health_benefits) VALUES 
     ('Banana', '/images/fruitsPic/bananas.png', 'Rich in fiber and prebiotics that feed your gut bacteria. Which is good because it helps keep your digestion smooth and supports a healthy balance in your gut.'),

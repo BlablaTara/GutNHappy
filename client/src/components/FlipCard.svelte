@@ -7,7 +7,6 @@
   import { fetchPost } from "../utils/fetch.js";
 
   onMount(() => {
-    console.log("FlipCard route Mountet");
     const params = new URLSearchParams(window.location.search);
     if (params.get("reset") === "1") {
       toastr.options = {
@@ -30,23 +29,23 @@
   };
 
   async function login() {
-    const response = await fetchPost("/api/login", loginData);
+    const loginResult = await fetchPost("/api/login", loginData);
 
-    if (response.error) {
-      if (response.status === 429) {
+    if (loginResult.error) {
+      if (loginResult.status === 429) {
         toastr.error(
           "You have used 3 login attempts. Try again in 15 minutes."
         );
       } else {
-        toastr.error(response.error);
+        toastr.error(loginResult.error);
       }
     } else {
       toastr.success("Login successful! - redirecting...");
 
-      if (!response.error) {
+      if (!loginResult.error) {
         authStore.set({
           isLoggedIn: true,
-          user: response.user,
+          user: loginResult.user,
           loading: false,
         });
 
@@ -67,14 +66,14 @@
     }
 
     try {
-      const response = await fetchPost("/api/signup", {
+      const signupResult = await fetchPost("/api/signup", {
         username: signupData.username,
         email: signupData.email,
         password: signupData.password,
       });
 
-      if (response.error) {
-        toastr.error(response.error);
+      if (signupResult.error) {
+        toastr.error(signupResult.error);
       } else {
         toastr.success("Signup successful! - redirecting...");
         setTimeout(() => {

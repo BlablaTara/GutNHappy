@@ -12,13 +12,13 @@
   onMount(async () => {
     authStore.set({ isLoggedIn: false, user: null, loading: true });
 
-    const response = await fetchGet("/api/protected");
+    const authResult = await fetchGet("/api/protected");
 
-    if (response.error || !response.isLoggedIn) {
+    if (authResult.error || !authResult.isLoggedIn) {
       authStore.set({ isLoggedIn: false, user: null, loading: false });
       navigate("/login");
     } else {
-      authStore.set({ isLoggedIn: true, user: response.user, loading: false });
+      authStore.set({ isLoggedIn: true, user: authResult.user, loading: false });
     }
     loading = false;
   });

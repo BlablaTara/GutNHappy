@@ -6,10 +6,10 @@
   let email = "";
 
   async function sendReset() {
-    const response = await fetchPost("/api/forgot-password", { email });
+    const resetResult = await fetchPost("/api/forgot-password", { email });
 
-    if (response.error) {
-      toastr.error(response.error);
+    if (resetResult.error) {
+      toastr.error(resetResult.error);
     } else {
       toastr.success("Reset link sent to your email");
       toastr.info("Check spam");

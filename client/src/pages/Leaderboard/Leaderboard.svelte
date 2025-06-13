@@ -2,7 +2,9 @@
   import { onMount } from "svelte";
   import { get } from "svelte/store";
   import { io } from "socket.io-client";
+
   import { fetchGet } from "../../utils/fetch.js";
+  import { BASE_URL } from "../../stores/generalStore.js";
   import { authStore } from "../../stores/authStore.js";
 
   import UserProcess from "../../components/UserProcess.svelte";
@@ -22,25 +24,23 @@
     : [];
 
   async function getLeaderboard() {
-    const result = await fetchGet("/api/protected/leaderboard");
-    if (result.success && Array.isArray(result.data)) {
-      users = result.data;
-      currentWeek = result.week;
-      console.log("Leaderboard data:", result.data);
+    const leaderboardResult = await fetchGet("/api/protected/leaderboard");
+    if (leaderboardResult.success && Array.isArray(leaderboardResult.data)) {
+      users = leaderboardResult.data;
+      currentWeek = leaderboardResult.week;
     } else {
       users = [];
     }
   }
 
   onMount(() => {
-    socket = io("http://localhost:8080", {
+    socket = io(get(BASE_URL), {
       withCredentials: true,
     });
 
     getLeaderboard();
 
     socket.on("leaderboard-update", (data) => {
-      console.log("Recieved update:", data);
       getLeaderboard();
     });
   });

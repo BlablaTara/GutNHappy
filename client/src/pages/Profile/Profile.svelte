@@ -2,8 +2,9 @@
   import { onMount } from "svelte";
   import { get } from "svelte/store";
   import { navigate } from "svelte-routing";
-  import { authStore } from "../../stores/authStore";
   import toastr from "toastr";
+
+  import { authStore } from "../../stores/authStore";
 
   let user;
   let loading = true;
@@ -19,11 +20,11 @@
     if (!confirmed) return;
 
     try {
-      const resultDB = await fetch("/api/protected/profile", {
+      const profileResult = await fetch("/api/protected/profile", {
         method: "DELETE",
       });
 
-      if (!resultDB.ok) {
+      if (!profileResult.ok) {
         toastr.error("Could not delete profile.");
         return;
       }

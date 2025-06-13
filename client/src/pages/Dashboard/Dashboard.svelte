@@ -1,10 +1,11 @@
 <script>
   import { onMount, onDestroy, tick } from "svelte";
-  import { authStore } from "../../stores/authStore.js";
-  import { fetchGet } from "../../utils/fetch.js";
   import { Link } from "svelte-routing";
   import Chart from "chart.js/auto";
   import annotationPlugin from "chartjs-plugin-annotation";
+
+  import { authStore } from "../../stores/authStore.js";
+  import { fetchGet } from "../../utils/fetch.js";
 
   import UserProcess from "../../components/UserProcess.svelte";
   import FoodBox from "../../components/FoodBox.svelte";
@@ -86,13 +87,8 @@
 
   async function updateData() {
     try {
-      const result = await fetchGet("/api/protected/user-weekly-selections");
-
-      if (result.error) {
-        return console.error("Error getting weekly data:", result.error);
-      }
-
-      const weeklyArray = result.data;
+      const uwsResult = await fetchGet("/api/protected/user-weekly-selections");
+      const weeklyArray = uwsResult.data;
 
       hasData = true;
       summary = weeklyArray;
@@ -109,30 +105,23 @@
       totalFruits = latestWeek.fruits;
       totalVeggies = latestWeek.veggies;
 
-      const selectionsResult = await fetchGet("/api/protected/user-selections");
+      const selectionsResponse = await fetchGet("/api/protected/user-selections");
 
-      if (selectionsResult?.data) {
-        selectedFruits = selectionsResult.data.fruits || [];
-        selectedVeggies = selectionsResult.data.vegetables || [];
+      if (selectionsResponse?.data) {
+        selectedFruits = selectionsResponse.data.fruits || [];
+        selectedVeggies = selectionsResponse.data.vegetables || [];
       }
-
-      console.log("Selected Fruits:", selectedFruits);
-      console.log("Selected Veggies:", selectedVeggies);
-
-      console.log("Weekly data", weeklyArray); //LoG
 
       if (chart) {
         chart.data = chartData;
         chart.update();
       }
     } catch (error) {
-      console.error("Unexpected error fetching weekly data:", error);
     }
   }
 
   onMount(async () => {
     await tick();
-
     await updateData();
 
     if (hasData && canvas) {

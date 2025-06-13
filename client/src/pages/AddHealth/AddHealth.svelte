@@ -1,23 +1,21 @@
 <script>
   import { onMount } from "svelte";
-  import { authStore } from "../../stores/authStore.js";
-  import { fetchGet, fetchPost } from "../../utils/fetch.js";
   import { io } from "socket.io-client";
   import { get } from "svelte/store";
   import { navigate } from "svelte-routing";
   import toastr from "toastr";
 
+  import { authStore } from "../../stores/authStore.js";
+  import { fetchGet, fetchPost } from "../../utils/fetch.js";
+
   import FoodBox from "../../components/FoodBox.svelte";
   import SearchFruitsNVeggies from "../../components/SearchFruitsNVeggies.svelte";
   import ShowFoodModal from "../../components/ShowFoodModal.svelte";
+  import { BASE_URL } from "../../stores/generalStore.js";
 
-  const socket = io("http://localhost:8080", {
+  const socket = io(get(BASE_URL), {
     withCredentials: true,
   });
-
-  let selectedFood = null;
-
-  let currentWeekId = null;
 
   let query = "";
 
@@ -27,17 +25,17 @@
   let filteredFruits = [];
   let filteredVeggies = [];
 
+  let selectedFood = null;
   let selectedFruitIds = [];
   let selectedVeggieIds = [];
 
+  let currentWeekId = null;
   let isSaving = false;
 
   onMount(async () => {
-    console.log("Fruits N Veggies route Mountet");
 
     const auth = get(authStore);
     if (!auth || !auth.isLoggedIn) {
-      console.log("AuthStore is not ready");
       return;
     }
 
@@ -45,38 +43,36 @@
     if (!weekResult.error && weekResult.weekId) {
       currentWeekId = weekResult.weekId;
     } else {
-      console.log("Kunne ikke hente current week fra server");
       return;
     }
     await Promise.all([loadFruits(), loadVeggies(), loadUserSelections()]);
   });
 
   async function loadFruits() {
-    const fruitData = await fetchGet("/api/protected/fruits");
-    if (!fruitData.error) {
-      fruits = fruitData.data;
+    const fruitsResult = await fetchGet("/api/protected/fruits");
+    if (!fruitsResult.error) {
+      fruits = fruitsResult.data;
     }
   }
 
   async function loadVeggies() {
-    const veggieData = await fetchGet("/api/protected/vegetables");
-    if (!veggieData.error) {
-      veggies = veggieData.data;
+    const veggiesResult = await fetchGet("/api/protected/vegetables");
+    if (!veggiesResult.error) {
+      veggies = veggiesResult.data;
     }
   }
 
   async function loadUserSelections() {
     try {
-      const selections = await fetchGet(
+      const selectionsResult = await fetchGet(
         `/api/protected/user-selections?week_id=${currentWeekId}`
       );
 
-      if (!selections.error && selections.success) {
-        selectedFruitIds = selections.data.fruits.map((fruit) => fruit.id);
-        selectedVeggieIds = selections.data.vegetables.map((veg) => veg.id);
+      if (!selectionsResult.error && selectionsResult.success) {
+        selectedFruitIds = selectionsResult.data.fruits.map((fruit) => fruit.id);
+        selectedVeggieIds = selectionsResult.data.vegetables.map((veg) => veg.id);
       }
     } catch (error) {
-      console.log("Couln't read the users earlier choices:", error);
     }
   }
 
@@ -86,7 +82,6 @@
     } else {
       selectedFruitIds = [...selectedFruitIds, fruit.id];
     }
-    console.log("Selected fruits:", selectedFruitIds);
   }
 
   function toggleVeggie(veggie) {
@@ -95,7 +90,6 @@
     } else {
       selectedVeggieIds = [...selectedVeggieIds, veggie.id];
     }
-    console.log("Selected veggies:", selectedVeggieIds);
   }
 
   async function saveSelections() {
@@ -107,13 +101,13 @@
         return;
       }
 
-      const result = await fetchPost("/api/protected/save-selections", {
+      const SaveResult = await fetchPost("/api/protected/save-selections", {
         fruitIds: selectedFruitIds,
         veggieIds: selectedVeggieIds,
         date: currentWeekId,
       });
 
-      if (result.error) {
+      if (SaveResult.error) {
         toastr.error(
           "Sorry. An error occured trying to save your choices. Try again"
         );

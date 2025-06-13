@@ -1,19 +1,19 @@
 import pool from "./db.js";
-import { getISOWeek, getYear, subWeeks } from 'date-fns';
+import { getISOWeek, getYear, subWeeks } from "date-fns";
 
 const users = [
-  { id: 1, name: 'MissTerror' },
-  { id: 2, name: 'LoneKone' },
-  { id: 3, name: 'Magic4ever' },
+  { id: 1, name: "MissTerror" },
+  { id: 2, name: "LoneKone" },
+  { id: 3, name: "Magic4ever" },
 ];
 
-const fruitIds = [1, 2, 3, 4, 5, 6]; 
+const fruitIds = [1, 2, 3, 4, 5, 6];
 const vegetableIds = [1, 2, 3, 4, 5, 6];
 
 function getWeekId(date) {
   const year = getYear(date);
   const week = getISOWeek(date);
-  return `${year}-${week.toString().padStart(2, '0')}`;
+  return `${year}-${week.toString().padStart(2, "0")}`;
 }
 
 function getRandomSubset(arr, maxItems = 6) {

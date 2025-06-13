@@ -1,5 +1,5 @@
 import { Router } from "express";
-import pool from "../utils/db.js";
+import pool from "../utils/db/db.js";
 import { getWeek } from "../utils/weeks.js";
 
 const router = Router();
@@ -14,11 +14,9 @@ router.get("/vegetables", async (req, res) => {
   res.send({ data: resultDB.rows });
 });
 
-
 router.post("/save-selections", async (req, res) => {
   const { fruitIds, veggieIds, date } = req.body;
   const userId = req.session.user?.id;
-  console.log("User ID in save session:", userId);
 
   if (!userId) {
     return res
@@ -81,12 +79,10 @@ router.post("/save-selections", async (req, res) => {
       "Could not save selection. Full error:",
       error.stack || error
     );
-    res
-      .status(500)
-      .send({
-        error: true,
-        message: "An error occurred while saving your choices",
-      });
+    res.status(500).send({
+      error: true,
+      message: "An error occurred while saving your choices",
+    });
   } finally {
     client.release();
   }
@@ -99,10 +95,10 @@ router.get("/current-week", (req, res) => {
     res.send({ success: true, weekId });
   } catch (error) {
     console.error("Error while calculating current week:", error);
-    res.status(500).send({ error: true, message: "Could not determine the current week.",});
+    res
+      .status(500)
+      .send({ error: true, message: "Could not determine the current week." });
   }
-
 });
-
 
 export default router;

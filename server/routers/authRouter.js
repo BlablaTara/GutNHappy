@@ -3,7 +3,7 @@ const router = Router();
 
 import bcrypt from "bcrypt";
 import crypto from "crypto";
-import pool from "../utils/db.js";
+import pool from "../utils/db/db.js";
 import { sendNewPassword } from "../utils/sendMAil.js";
 import {
   isBlocked,
@@ -87,8 +87,9 @@ router.post("/forgot-password", async (req, res) => {
   if (!email)
     return res.status(400).send({ errorMessage: "Email is required" });
 
-
-  const resultDB = await pool.query(`SELECT * FROM users WHERE email = $1`, [email]);
+  const resultDB = await pool.query(`SELECT * FROM users WHERE email = $1`, [
+    email,
+  ]);
   const user = resultDB.rows[0];
 
   if (!user) {
@@ -119,9 +120,10 @@ router.post("/reset-password", async (req, res) => {
     return res.status(400).send({ errorMessage: "Missing token or password" });
   }
 
-  const resultDB = await pool.query(`SELECT * FROM users WHERE reset_token = $1`, [
-    token,
-  ]);
+  const resultDB = await pool.query(
+    `SELECT * FROM users WHERE reset_token = $1`,
+    [token]
+  );
   const user = resultDB.rows[0];
 
   if (!user || user.reset_token_expires < Date.now()) {
