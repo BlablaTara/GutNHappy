@@ -22,7 +22,7 @@ export async function fetchPost(url, body) {
     });
 
     const result = await response.json();
-
+    result.status = response.status;
     return result;
   } catch {
     return { error: "Network error" };

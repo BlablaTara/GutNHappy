@@ -1,41 +1,33 @@
 import { Router } from "express";
 import pool from "../utils/db/db.js";
+
 import { getWeek } from "../utils/weeks.js";
 
 const router = Router();
 
 router.get("/fruits", async (req, res) => {
-  const resultDB = await pool.query("SELECT * FROM fruits;");
-  res.send({ data: resultDB.rows });
+  const resultFruits = await pool.query("SELECT * FROM fruits;");
+  res.send({ data: resultFruits.rows });
 });
 
 router.get("/vegetables", async (req, res) => {
-  const resultDB = await pool.query("SELECT * FROM vegetables");
-  res.send({ data: resultDB.rows });
+  const resultVeggies = await pool.query("SELECT * FROM vegetables");
+  res.send({ data: resultVeggies.rows });
 });
 
 router.post("/save-selections", async (req, res) => {
   const { fruitIds, veggieIds, date } = req.body;
   const userId = req.session.user?.id;
-
-  if (!userId) {
-    return res
-      .status(400)
-      .send({ error: true, message: "User not authenticated" });
-  }
-
   const weekId = date || getWeek(new Date());
 
-  if (!Array.isArray(fruitIds) || !Array.isArray(veggieIds)) {
-    return res
-      .status(400)
-      .send({ error: true, message: "Fruit og veggie id not correct" });
+  if (!userId) {
+    return res.status(400).send({ success: false, error: "You need to be logged in."});
   }
 
   const client = await pool.connect();
 
   try {
-    await client.query("START TRANSACTION");
+    await client.query("BEGIN");
 
     await client.query(
       "DELETE FROM user_fruit_selections WHERE user_id = $1 AND week_id = $2",
@@ -65,7 +57,6 @@ router.post("/save-selections", async (req, res) => {
 
     res.send({
       success: true,
-      message: "Your choices is now saved",
       data: {
         date: weekId,
         fruitCount: fruitIds.length,
@@ -73,16 +64,9 @@ router.post("/save-selections", async (req, res) => {
         totalCount: fruitIds.length + veggieIds.length,
       },
     });
-  } catch (error) {
+  } catch {
     await client.query("ROLLBACK");
-    console.error(
-      "Could not save selection. Full error:",
-      error.stack || error
-    );
-    res.status(500).send({
-      error: true,
-      message: "An error occurred while saving your choices",
-    });
+    res.status(500).send({ error: true });
   } finally {
     client.release();
   }
@@ -90,14 +74,10 @@ router.post("/save-selections", async (req, res) => {
 
 router.get("/current-week", (req, res) => {
   try {
-    const now = new Date();
-    const weekId = getWeek(now);
-    res.send({ success: true, weekId });
-  } catch (error) {
-    console.error("Error while calculating current week:", error);
-    res
-      .status(500)
-      .send({ error: true, message: "Could not determine the current week." });
+    const currentWeekId = getWeek(new Date());
+    res.send({ success: true, data: currentWeekId });
+  } catch {
+    res.status(500).send({ error: true });
   }
 });
 

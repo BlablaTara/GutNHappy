@@ -33,15 +33,14 @@
   let isSaving = false;
 
   onMount(async () => {
-
     const auth = get(authStore);
     if (!auth || !auth.isLoggedIn) {
       return;
     }
 
     const weekResult = await fetchGet("/api/protected/current-week");
-    if (!weekResult.error && weekResult.weekId) {
-      currentWeekId = weekResult.weekId;
+    if (!weekResult.error && weekResult.data) {
+      currentWeekId = weekResult.data;
     } else {
       return;
     }
@@ -63,16 +62,14 @@
   }
 
   async function loadUserSelections() {
-    try {
-      const selectionsResult = await fetchGet(
-        `/api/protected/user-selections?week_id=${currentWeekId}`
-      );
+    
+    const selectionsResult = await fetchGet(
+      `/api/protected/user-selections?week_id=${currentWeekId}`
+    );
 
-      if (!selectionsResult.error && selectionsResult.success) {
-        selectedFruitIds = selectionsResult.data.fruits.map((fruit) => fruit.id);
-        selectedVeggieIds = selectionsResult.data.vegetables.map((veg) => veg.id);
-      }
-    } catch (error) {
+    if (!selectionsResult.error && selectionsResult.success) {
+      selectedFruitIds = selectionsResult.data.fruits.map((fruit) => fruit.id);
+      selectedVeggieIds = selectionsResult.data.vegetables.map((veg) => veg.id);
     }
   }
 
@@ -124,7 +121,7 @@
           navigate("/dashboard");
         }, 1500);
       }
-    } catch (error) {
+    } catch {
       toastr.error("Unexpected error while saving.");
     } finally {
       isSaving = false;

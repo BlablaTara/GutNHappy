@@ -31,31 +31,27 @@
   async function login() {
     const loginResult = await fetchPost("/api/login", loginData);
 
-    if (loginResult.error) {
+    if (!loginResult.success) {
       if (loginResult.status === 429) {
         toastr.error(
           "You have used 3 login attempts. Try again in 15 minutes."
         );
       } else {
-        toastr.error(loginResult.error);
+        toastr.error("Login failed. Please try again.");
       }
+      authStore.set({ isLoggedIn: false, user: null, loading: false });
     } else {
       toastr.success("Login successful! - redirecting...");
 
-      if (!loginResult.error) {
-        authStore.set({
-          isLoggedIn: true,
-          user: loginResult.user,
-          loading: false,
-        });
+      authStore.set({
+        isLoggedIn: true,
+        user: loginResult.user,
+        loading: false,
+      });
 
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 1500);
-      } else {
-        authStore.set({ isLoggedIn: false, user: null, loading: false });
-        toastr.error("Couldn't verify login. Please try again.");
-      }
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1500);
     }
   }
 
@@ -143,7 +139,7 @@
 </div>
 
 <style>
-    button {
+  button {
     margin-top: 1rem;
     display: block;
     padding: 0.6rem;

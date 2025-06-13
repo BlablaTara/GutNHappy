@@ -1,8 +1,7 @@
-// tæller { ip: { count, lastAttempt }}
 const attempts = new Map();
 
 const maxAttempts = 3;
-const blockDuration = 15 * 60 * 1000; // 15 minutter
+const blockDuration = 1000 * 60 * 15;
 
 export function recordLoginAttempt(ip) {
   const entry = attempts.get(ip) || { count: 0, lastAttempt: Date.now() };

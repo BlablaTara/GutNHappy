@@ -6,13 +6,12 @@ import { getWeek } from "../utils/weeks.js";
 const router = Router();
 
 router.get("/user-selections", async (req, res) => {
-  console.log("user-selection Session:", req.session);
   try {
     const userId = req.session.user?.id;
     if (!userId) {
       return res
         .status(401)
-        .send({ error: true, message: "User not authenticated" });
+        .send({ success: false, error: "User not authenticated" });
     }
 
     const dateParam = req.query.date;
@@ -55,17 +54,15 @@ router.get("/user-selections", async (req, res) => {
         uniqueVeggieCount: uniqueVeggieIds.size,
       },
     });
-  } catch (error) {
-    console.error("Error finding users choice :", error);
-    res.status(500).send({
-      error: true,
-      message: "Sorry, an error occured, trying to get your choices.",
+  } catch {
+    res.status(500).send({ 
+      success: false,
+      error: "Sorry, an error occured, trying to get your choices.",
     });
   }
 });
 
 router.get("/user-weekly-selections", async (req, res) => {
-  console.log("user-weekly-selections Session:", req.session);
   try {
     const userId = req.session.user?.id;
 
