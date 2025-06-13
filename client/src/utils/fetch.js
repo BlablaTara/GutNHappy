@@ -1,4 +1,3 @@
-
 export async function fetchGet(url) {
   try {
     const response = await fetch(url, {
@@ -9,9 +8,9 @@ export async function fetchGet(url) {
 
     return result;
   } catch {
-    return { error: "Network error"};
+    return { error: "Network error" };
   }
-};
+}
 
 export async function fetchPost(url, body) {
   try {
@@ -28,7 +27,7 @@ export async function fetchPost(url, body) {
   } catch {
     return { error: "Network error" };
   }
-};
+}
 
 export async function fetchDelete(url) {
   try {
@@ -38,7 +37,7 @@ export async function fetchDelete(url) {
     });
 
     const result = await response.json();
-    
+
     if (!response.ok) {
       return { success: false, ...result };
     }
@@ -47,6 +46,4 @@ export async function fetchDelete(url) {
   } catch {
     return { success: false };
   }
-};
-
-
+}

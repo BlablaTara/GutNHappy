@@ -1,8 +1,8 @@
 import { mount } from "svelte";
-import "./css/app.css";
 import App from "./App.svelte";
-import "toastr/build/toastr.min.css";
 import toastr from "toastr";
+import "./css/app.css";
+import "toastr/build/toastr.min.css";
 
 toastr.options = {
   closeButton: true,

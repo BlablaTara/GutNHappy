@@ -1,9 +1,10 @@
 <script>
   import { Router, Route } from "svelte-routing";
+  import "./css/navigation.css";
   import Home from "./pages/Home/Home.svelte";
   import Dashboard from "./pages/Dashboard/Dashboard.svelte";
   import Profile from "./pages/Profile/Profile.svelte";
-  import FruitsNVeggies from "./pages/AddHealth/AddHealth.svelte";
+  import AddHealth from "./pages/AddHealth/AddHealth.svelte";
   import Leaderboard from "./pages/Leaderboard/Leaderboard.svelte";
 
   import NavBar from "./components/NavBar.svelte";
@@ -11,9 +12,6 @@
   import PrivateRoute from "./components/PrivateRoute.svelte";
   import ForgotPassword from "./components/ForgotPassword.svelte";
   import ResetPassword from "./components/ResetPassword.svelte";
-
-  import "./css/navigation.css";
-  import AddHealth from "./pages/AddHealth/AddHealth.svelte";
 
   export let url;
 </script>
