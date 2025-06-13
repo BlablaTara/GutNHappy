@@ -21,7 +21,9 @@ router.post("/save-selections", async (req, res) => {
   const weekId = date || getWeek(new Date());
 
   if (!userId) {
-    return res.status(400).send({ success: false, error: "You need to be logged in."});
+    return res
+      .status(400)
+      .send({ success: false, error: "You need to be logged in." });
   }
 
   const client = await pool.connect();
@@ -77,7 +79,7 @@ router.get("/current-week", (req, res) => {
     const currentWeekId = getWeek(new Date());
     res.send({ success: true, data: currentWeekId });
   } catch {
-    res.status(500).send({ error: true });
+    res.status(500).send({ success: false });
   }
 });
 

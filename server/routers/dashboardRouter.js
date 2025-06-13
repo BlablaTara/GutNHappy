@@ -55,7 +55,7 @@ router.get("/user-selections", async (req, res) => {
       },
     });
   } catch {
-    res.status(500).send({ 
+    res.status(500).send({
       success: false,
       error: "Sorry, an error occured, trying to get your choices.",
     });
@@ -65,18 +65,10 @@ router.get("/user-selections", async (req, res) => {
 router.get("/user-weekly-selections", async (req, res) => {
   try {
     const userId = req.session.user?.id;
-
-    console.log("weekly-selections userId: ", userId);
-
     const weeksToShow = getLastNumberOfWeeks(10);
 
     const weeklyDataMap = new Map(
       weeksToShow.map((week) => [week, { week, fruits: 0, veggies: 0 }])
-    );
-
-    console.log(
-      "weeklyDataMap efter opdatering:",
-      Array.from(weeklyDataMap.entries())
     );
 
     const [weeklyFruitsResult, weeklyVeggiesResult] = await Promise.all([
@@ -124,19 +116,14 @@ router.get("/user-weekly-selections", async (req, res) => {
       };
     });
 
-    console.log("FRUGTER fra DB:", weeklyFruitsResult.rows); //LOG
-    console.log("VEGETABLER fra DB:", weeklyVeggiesResult.rows); //LOG
-    console.log("weeksToShow:", weeksToShow); //LOG
-
     res.send({
       success: true,
       data: weeklyData,
     });
-  } catch (error) {
-    console.error("Error fetching weekly selections:", error);
+  } catch {
     res
       .status(500)
-      .send({ error: true, message: "Could not fetch weekly selections" });
+      .send({ success: false, error: "Could not fetch weekly selections" });
   }
 });
 

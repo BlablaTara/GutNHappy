@@ -40,7 +40,7 @@
 
     getLeaderboard();
 
-    socket.on("leaderboard-update", (data) => {
+    socket.on("leaderboard-update", () => {
       getLeaderboard();
     });
   });

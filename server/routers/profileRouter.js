@@ -13,12 +13,12 @@ router.get("/profile", async (req, res) => {
     );
 
     if (resultDB.rows.length === 0) {
-      return res.status(404).send({ error: "User not found" });
+      return res.status(404).send({ success: false, error: "User not found" });
     }
 
     res.send(resultDB.rows[0]);
   } catch {
-    res.status(500).send({ error: "Internal server error" });
+    res.status(500).send({ success: false, error: "Internal server error" });
   }
 });
 
@@ -33,10 +33,10 @@ router.delete("/profile", async (req, res) => {
     );
 
     req.session.destroy(() => {
-      res.send({ success: true, message: "User deleted " });
+      res.send({ success: true });
     });
   } catch {
-    res.status(500).send({ success: false, error: "Internal server error" });
+    res.status(500).send({ success: false });
   }
 });
 

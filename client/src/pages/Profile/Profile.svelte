@@ -31,7 +31,7 @@
       authStore.set({ isLoggedIn: false, user: null, loading: false });
       toastr.success("Profile deleted successfully!");
       navigate("/");
-    } catch (error) {
+    } catch {
       toastr.error("Something went wrong while deleting your profile.");
     }
   }

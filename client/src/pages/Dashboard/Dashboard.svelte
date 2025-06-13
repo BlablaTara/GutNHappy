@@ -1,6 +1,7 @@
 <script>
   import { onMount, onDestroy, tick } from "svelte";
   import { Link } from "svelte-routing";
+  import toastr from "toastr";
   import Chart from "chart.js/auto";
   import annotationPlugin from "chartjs-plugin-annotation";
 
@@ -90,6 +91,11 @@
       const uwsResult = await fetchGet("/api/protected/user-weekly-selections");
       const weeklyArray = uwsResult.data;
 
+      if (!uwsResult.success || !uwsResult.data) {
+      toastr.error("Could not load weekly selections.");
+      return;
+      }
+
       hasData = true;
       summary = weeklyArray;
 
@@ -116,7 +122,8 @@
         chart.data = chartData;
         chart.update();
       }
-    } catch (error) {
+    } catch {
+      toastr.error("Something went wrong while loading your dashboard data. Please try again later.");
     }
   }
 

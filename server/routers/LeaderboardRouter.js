@@ -1,11 +1,11 @@
 import { Router } from "express";
 import pool from "../utils/db/db.js";
+
 import { getWeek } from "../utils/weeks.js";
 
 const router = Router();
 
 router.get("/leaderboard", async (req, res) => {
-  console.log(" leaderboard Session:", req.session);
   try {
     const currentWeek = getWeek(new Date());
     const resultDB = await pool.query(
@@ -31,13 +31,11 @@ router.get("/leaderboard", async (req, res) => {
             `,
       [currentWeek]
     );
-    console.log("Leaderboard DB rows:", resultDB.rows);
     res.send({ success: true, data: resultDB.rows, week: currentWeek });
-  } catch (error) {
-    console.error("Error getting leaderbord data", error);
+  } catch {
     res
       .status(500)
-      .send({ error: true, message: "Error getting leaderboard data" });
+      .send({ success: false, error: "Error getting leaderboard data" });
   }
 });
 
