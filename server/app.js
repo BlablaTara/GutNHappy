@@ -42,43 +42,8 @@ const io = new Server(server, {
 });
 
 io.engine.use(sessionMiddleware);
+
 setupSockets(io);
-
-// io.on("connection", (socket) => {
-//   const user = socket.request.session.user;
-//   console.log("A client is connected", user?.username || "Unknown");
-
-//   socket.on("new-selection", (data) => {
-//     if (!user) return;
-
-//     console.log(`${user.username} added a new ${data.type}`);
-
-//     io.emit("leaderboard-update", { username: user.username, ...data });
-//   });
-//   socket.on("disconnect", () => {
-//     console.log("A client disconnected", socket.id);
-//   });
-// });
-
-
-
-// import authRouter from "./routers/authRouter.js";
-// import protectedRouter from "./routers/protectedRouter.js";
-// import fruitsNVeggiesRouter from "./routers/fruitsNVeggiesRouter.js";
-// import dashboardRouter from "./routers/dashboardRouter.js";
-// import leaderboardRouter from "./routers/leaderboardRouter.js";
-// import profileRouter from "./routers/profileRouter.js"
-
-// app.use("/api", authRouter);
-
-// app.use("/api/protected", 
-// 	protectedRouter,
-// 	fruitsNVeggiesRouter,
-// 	dashboardRouter,
-// 	leaderboardRouter,
-//   profileRouter
-// );
-
 
 const PORT = 8080;
 server.listen(PORT, () => console.log("Server is running on: ", PORT));

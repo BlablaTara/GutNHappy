@@ -17,8 +17,7 @@ router.get("/profile", async (req, res) => {
     }
 
     res.send(resultDB.rows[0]);
-  } catch (error) {
-    console.error("Error fetching profile:", error);
+  } catch {
     res.status(500).send({ error: "Internal server error" });
   }
 });
@@ -29,16 +28,15 @@ router.delete("/profile", async (req, res) => {
 
     await pool.query(
       `
-            DELETE FROM users WHERE id = $1`,
+        DELETE FROM users WHERE id = $1`,
       [id]
     );
 
     req.session.destroy(() => {
       res.send({ success: true, message: "User deleted " });
     });
-  } catch (error) {
-    console.error("Error deleting user:", error);
-    res.status(500).send({ error: "Internal server error" });
+  } catch {
+    res.status(500).send({ success: false, error: "Internal server error" });
   }
 });
 
