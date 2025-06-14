@@ -5,7 +5,6 @@
   import { navigate } from "svelte-routing";
   import toastr from "toastr";
 
-  import { authStore } from "../../stores/authStore.js";
   import { fetchGet, fetchPost } from "../../utils/fetch.js";
 
   import FoodBox from "../../components/FoodBox.svelte";
@@ -34,12 +33,6 @@
 
   onMount(async () => {
 
-    const weekResult = await fetchGet("/api/protected/current-week");
-    if (!weekResult.error && weekResult.data) {
-      currentWeekId = weekResult.data;
-    } else {
-      return;
-    }
     await Promise.all([loadFruits(), loadVeggies(), loadUserSelections()]);
   });
 
@@ -57,13 +50,11 @@
     }
   }
 
-  async function loadUserSelections() {
-    
-    const selectionsResult = await fetchGet(
-      `/api/protected/user-selections?week_id=${currentWeekId}`
-    );
+  async function loadUserSelections() { 
+    const selectionsResult = await fetchGet("/api/protected/user-selections");
 
     if (!selectionsResult.error && selectionsResult.success) {
+      currentWeekId = selectionsResult.data.weekId;
       selectedFruitIds = selectionsResult.data.fruits.map((fruit) => fruit.id);
       selectedVeggieIds = selectionsResult.data.vegetables.map((veg) => veg.id);
     }

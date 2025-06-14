@@ -22,11 +22,9 @@ export async function sendNewPassword(to, resetLink) {
   };
 
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent: " + info.response);
+    await transporter.sendMail(mailOptions);
     return { success: true };
-  } catch (error) {
-    console.log("Error sending email: ", error);
-    return { success: false, error: error.message };
+  } catch {
+    return { success: false, error: "Could not send reset email. Try again later."};
   }
 }

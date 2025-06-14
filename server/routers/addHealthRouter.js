@@ -69,13 +69,4 @@ router.post("/save-selections", async (req, res) => {
   }
 });
 
-router.get("/current-week", (req, res) => {
-  try {
-    const currentWeekId = getWeek(new Date());
-    res.send({ success: true, data: currentWeekId });
-  } catch {
-    res.status(500).send({ success: false });
-  }
-});
-
 export default router;
