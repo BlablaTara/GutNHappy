@@ -1,11 +1,7 @@
 import pool from "./db.js";
 import { getISOWeek, getYear, subWeeks } from "date-fns";
 
-const users = [
-  { id: 1, name: "MissTerror" },
-  { id: 2, name: "LoneKone" },
-  { id: 3, name: "Magic4ever" },
-];
+const users = [{ id: 1 }, { id: 2 }, { id: 3 }];
 
 const fruitIds = [1, 2, 3, 4, 5, 6];
 const vegetableIds = [1, 2, 3, 4, 5, 6];
@@ -57,8 +53,8 @@ async function seedWeeklyData() {
 
     console.log("Seeding completed!");
     process.exit(0);
-  } catch (err) {
-    console.error("Error seeding data:", err);
+  } catch (error) {
+    console.error("Error seeding data:", error);
     process.exit(1);
   }
 }

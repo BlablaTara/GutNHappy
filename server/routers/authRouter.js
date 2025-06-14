@@ -5,40 +5,30 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 
 import { sendNewPassword } from "../utils/sendMail.js";
-import {
-  isBlocked,
-  recordLoginAttempt,
-  resetAttempts,
-} from "../utils/loginAttempts.js";
+import { loginLimiter } from "../utils/loginAttempts.js"
 
 const router = Router();
 
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
   const { username, password } = req.body;
   const ip = req.ip;
 
-  if (isBlocked(ip)) {
-    return res.status(429).send({
-      success: false,
-    });
-  }
   const resultDB = await pool.query(`SELECT * FROM users WHERE username = $1`, [
     username,
   ]);
 
   const user = resultDB.rows[0];
   if (!user) {
-    recordLoginAttempt(ip);
     return res.status(401).send({ success: false, error: "User not found" });
   }
 
   const match = await bcrypt.compare(password, user.password);
   if (!match) {
-    recordLoginAttempt(ip);
     return res.status(401).send({ success: false, error: "Wrong password" });
   }
 
-  resetAttempts(ip);
+  loginLimiter.resetKey(ip)
+  
   req.session.user = {
     id: user.id,
     email: user.email,

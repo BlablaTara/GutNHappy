@@ -103,7 +103,6 @@
         toastr.success("Succesfully saved! - redirecting...");
 
         socket.emit("new-selection", {
-          type: "weeklyUpdate",
           totalFruits: selectedFruitIds.length,
           totalVeggies: selectedVeggieIds.length,
         });
