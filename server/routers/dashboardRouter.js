@@ -8,11 +8,6 @@ const router = Router();
 router.get("/user-selections", async (req, res) => {
   try {
     const userId = req.session.user?.id;
-    if (!userId) {
-      return res
-        .status(401)
-        .send({ success: false, error: "User not authenticated" });
-    }
 
     const dateParam = req.query.date;
     const date = dateParam ? new Date(dateParam) : new Date();

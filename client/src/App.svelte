@@ -12,19 +12,34 @@
   import PrivateRoute from "./components/PrivateRoute.svelte";
   import ForgotPassword from "./components/ForgotPassword.svelte";
   import ResetPassword from "./components/ResetPassword.svelte";
+  import { onMount } from "svelte";
+  import { fetchGet } from "./utils/fetch";
+  import { authStore } from "./stores/authStore";
 
   export let url;
+
+  onMount(async () => {
+    try {
+      const resultDB = await fetchGet("/api/protected");
+      authStore.set({
+        isLoggedIn: !!resultDB.isLoggedIn,
+        user: resultDB.user ?? null,
+        loading: false
+      });
+    } catch {
+      authStore.set({ isLoggedIn: false, user: null, loading: false });
+
+    }
+  });
 </script>
 
 <Router {url}>
   <NavBar />
 
   <div>
-    <!--Without PrivatRoute-->
     <Route path="/"><Home /></Route>
     <Route path="/login"><FlipCard /></Route>
 
-    <!--With PrivatRoute-->
     <Route path="/dashboard">
       <PrivateRoute component={Dashboard} />
     </Route>

@@ -8,14 +8,14 @@
 
   const location = useLocation();
 
-  onMount(async () => {
-    const authResult = await fetchGet("/api/protected");
-    if (authResult.error || !authResult.data) {
-      authStore.set({ isLoggedIn: false, user: null, loading: false });
-    } else {
-      authStore.set({ isLoggedIn: true, user: authResult.user, loading: false });
-    }
-  });
+  // onMount(async () => {
+  //   const authResult = await fetchGet("/api/protected");
+  //   if (authResult.error || !authResult.data) {
+  //     authStore.set({ isLoggedIn: false, user: null, loading: false });
+  //   } else {
+  //     authStore.set({ isLoggedIn: true, user: authResult.user, loading: false });
+  //   }
+  // });
 
   async function handleLogout() {
     await logout();
@@ -36,7 +36,7 @@
       <Link to="/leaderboard">Leaderboard</Link>
       <Link to="/profile">Profile</Link>
       <button on:click={handleLogout}>Logout</button>
-    {:else if $location.pathname === "/" || $location.pathname === "/login" || $location.pathname === "/about"}
+    {:else if $location.pathname === "/" || $location.pathname === "/login" }
       <Link to="/login">Login/Signup</Link>
     {/if}
   </div>

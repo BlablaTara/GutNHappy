@@ -33,10 +33,6 @@
   let isSaving = false;
 
   onMount(async () => {
-    const auth = get(authStore);
-    if (!auth || !auth.isLoggedIn) {
-      return;
-    }
 
     const weekResult = await fetchGet("/api/protected/current-week");
     if (!weekResult.error && weekResult.data) {
@@ -93,18 +89,13 @@
     try {
       isSaving = true;
 
-      if (!$authStore.isLoggedIn) {
-        toastr.error = "You must be logged in.";
-        return;
-      }
-
       const SaveResult = await fetchPost("/api/protected/save-selections", {
         fruitIds: selectedFruitIds,
         veggieIds: selectedVeggieIds,
         date: currentWeekId,
       });
 
-      if (SaveResult.error) {
+      if (!SaveResult.success) {
         toastr.error(
           "Sorry. An error occured trying to save your choices. Try again"
         );
