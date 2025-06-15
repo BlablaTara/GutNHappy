@@ -3,7 +3,8 @@ export default function setupSockets(io) {
     const user = socket.request.session.user;
 
     socket.on("new-selection", (data) => {
-      if (!user) return;
+      if (!user) 
+        return;
 
       io.emit("leaderboard-update", { username: user.username, ...data });
     });

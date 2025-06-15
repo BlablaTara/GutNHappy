@@ -202,7 +202,7 @@
   {/if}
 
   {#if selectedFood}
-    <ShowFoodModal food={selectedFood} on:close={() => (selectedFood = null)} />
+    <ShowFoodModal food={selectedFood} onClose={() => (selectedFood = null)} />
   {/if}
 </div>
 

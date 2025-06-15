@@ -8,7 +8,7 @@ export async function fetchGet(url) {
 
     return result;
   } catch {
-    return { error: "Network error" };
+    return { success: false, error: "Network error" };
   }
 }
 
@@ -25,7 +25,25 @@ export async function fetchPost(url, body) {
     result.status = response.status;
     return result;
   } catch {
-    return { error: "Network error" };
+    return { success: false, error: "Network error" };
+  }
+}
+
+export async function fetchPut(url, body) {
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    const result = await response.json();
+    
+    result.status = response.status;
+    return result;
+  } catch {
+    return { success: false, error: "Network error" };
   }
 }
 
@@ -47,3 +65,5 @@ export async function fetchDelete(url) {
     return { success: false };
   }
 }
+
+

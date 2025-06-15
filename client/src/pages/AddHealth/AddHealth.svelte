@@ -32,7 +32,6 @@
   let isSaving = false;
 
   onMount(async () => {
-
     await Promise.all([loadFruits(), loadVeggies(), loadUserSelections()]);
   });
 
@@ -161,7 +160,7 @@
   {/if}
 
   {#if selectedFood}
-    <ShowFoodModal food={selectedFood} on:close={() => (selectedFood = null)} />
+    <ShowFoodModal food={selectedFood} onClose={() => (selectedFood = null)} />
   {/if}
 </div>
 

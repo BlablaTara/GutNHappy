@@ -1,20 +1,21 @@
 <script>
-  import { createEventDispatcher } from "svelte";
+  // import { createEventDispatcher } from "svelte";
   export let food;
+  export let onClose;
 
-  const dispatch = createEventDispatcher();
+  // const dispatch = createEventDispatcher();
 
-  function close() {
-    dispatch("close");
-  }
+  // function close() {
+  //   dispatch("close");
+  // }
 </script>
 
 <div
   class="modal-backdrop"
   role="button"
   tabindex="0"
-  on:click={close}
-  on:keydown={(e) => (e.key === "Enter" || e.key === " ") && close()}
+  on:click={onClose}
+  on:keydown={(e) => (e.key === "Enter" || e.key === " ") && onClose()}
 >
   <div
     class="modal-content"
@@ -24,7 +25,7 @@
     aria-modal="true"
     tabindex="0"
   >
-    <button class="close-button" on:click={close}>✖</button>
+    <button class="close-button" on:click={onClose}>✖</button>
 
     <img src={food.image_url} alt={food.name} />
     <h2>{food.name}</h2>
