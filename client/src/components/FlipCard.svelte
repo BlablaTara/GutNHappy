@@ -62,7 +62,7 @@
     }
 
     try {
-      const signupResult = await fetchPost("/api/signup", {
+      const signupResult = await fetchPost("/api/users/signup", {
         username: signupData.username,
         email: signupData.email,
         password: signupData.password,
@@ -105,7 +105,7 @@
         />
         <button on:click={login}>Login</button>
         <p class="forgot-password">
-          Forgot password? - Click <a href="/forgot-password">here</a>
+          Forgot password? - Click <a href="/users/forgot-password">here</a>
         </p>
       </div>
 

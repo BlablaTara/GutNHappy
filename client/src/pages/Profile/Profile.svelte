@@ -7,7 +7,7 @@
   import { authStore } from "../../stores/authStore";
   import { fetchDelete } from "../../utils/fetch.js";
 
-  let user;
+  let user = { username: "", email: "" };
   let loading = true;
 
   onMount(() => {
@@ -21,7 +21,7 @@
     if (!confirmed) return;
 
     try {
-      const profileResult = await fetchDelete("/api/protected/profile");
+      const profileResult = await fetchDelete("/api/protected/users/me");
 
       if (!profileResult.success) {
         toastr.error("Could not delete profile.");

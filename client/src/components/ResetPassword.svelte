@@ -1,7 +1,7 @@
 <script>
   import toastr from "toastr";
 
-  import { fetchPost } from "../utils/fetch.js";
+  import { fetchPatch } from "../utils/fetch.js";
 
   let params = new URLSearchParams(window.location.search);
   let token = params.get("token");
@@ -15,7 +15,7 @@
       return;
     }
 
-    const resetResult = await fetchPost("/api/reset-password", {
+    const resetResult = await fetchPatch("/api/users/reset-password", {
       token,
       newPassword,
     });

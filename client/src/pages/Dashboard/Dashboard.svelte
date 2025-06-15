@@ -92,8 +92,8 @@
       const weeklyArray = uwsResult.data;
 
       if (!uwsResult.success || !uwsResult.data) {
-      toastr.error("Could not load weekly selections.");
-      return;
+        toastr.error("Could not load weekly selections.");
+        return;
       }
 
       hasData = true;
@@ -111,7 +111,9 @@
       totalFruits = latestWeek.fruits;
       totalVeggies = latestWeek.veggies;
 
-      const selectionsResponse = await fetchGet("/api/protected/user-selections");
+      const selectionsResponse = await fetchGet(
+        "/api/protected/user-selections"
+      );
 
       if (selectionsResponse?.data) {
         selectedFruits = selectionsResponse.data.fruits || [];
@@ -123,7 +125,9 @@
         chart.update();
       }
     } catch {
-      toastr.error("Something went wrong while loading your dashboard data. Please try again later.");
+      toastr.error(
+        "Something went wrong while loading your dashboard data. Please try again later."
+      );
     }
   }
 

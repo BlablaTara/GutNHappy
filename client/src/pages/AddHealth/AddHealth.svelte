@@ -5,7 +5,7 @@
   import { navigate } from "svelte-routing";
   import toastr from "toastr";
 
-  import { fetchGet, fetchPost } from "../../utils/fetch.js";
+  import { fetchGet, fetchPut } from "../../utils/fetch.js";
 
   import FoodBox from "../../components/FoodBox.svelte";
   import SearchFruitsNVeggies from "../../components/SearchFruitsNVeggies.svelte";
@@ -49,7 +49,7 @@
     }
   }
 
-  async function loadUserSelections() { 
+  async function loadUserSelections() {
     const selectionsResult = await fetchGet("/api/protected/user-selections");
 
     if (!selectionsResult.error && selectionsResult.success) {
@@ -79,11 +79,13 @@
     try {
       isSaving = true;
 
-      const SaveResult = await fetchPost("/api/protected/save-selections", {
-        fruitIds: selectedFruitIds,
-        veggieIds: selectedVeggieIds,
-        date: currentWeekId,
-      });
+      const SaveResult = await fetchPut(
+        `/api/protected/user-selections/${currentWeekId}`,
+        {
+          fruitIds: selectedFruitIds,
+          veggieIds: selectedVeggieIds,
+        }
+      );
 
       if (!SaveResult.success) {
         toastr.error(

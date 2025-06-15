@@ -20,7 +20,7 @@ const sessionMiddleware = session({
   secret: process.env.SESSION_KEY,
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false }, 
+  cookie: { secure: false },
 });
 
 app.use(sessionMiddleware);

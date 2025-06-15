@@ -6,7 +6,9 @@
   let email = "";
 
   async function sendReset() {
-    const resetResult = await fetchPost("/api/forgot-password", { email });
+    const resetResult = await fetchPost("/api/users/forgot-password", {
+      email,
+    });
 
     if (resetResult.error) {
       toastr.error(resetResult.error);

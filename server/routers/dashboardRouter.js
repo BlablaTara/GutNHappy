@@ -1,7 +1,6 @@
 import { Router } from "express";
 import pool from "../utils/db/db.js";
-import { getLastNumberOfWeeks } from "../utils/weeks.js";
-import { getWeek } from "../utils/weeks.js";
+import { getWeek, getLastNumberOfWeeks } from "../utils/weeks.js";
 
 const router = Router();
 

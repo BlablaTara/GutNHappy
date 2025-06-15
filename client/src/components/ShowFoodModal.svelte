@@ -1,13 +1,6 @@
 <script>
-  // import { createEventDispatcher } from "svelte";
   export let food;
   export let onClose;
-
-  // const dispatch = createEventDispatcher();
-
-  // function close() {
-  //   dispatch("close");
-  // }
 </script>
 
 <div

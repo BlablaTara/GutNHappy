@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 
 import { sendNewPassword } from "../utils/sendMail.js";
-import { loginLimiter } from "../utils/loginAttempts.js"
+import { loginLimiter } from "../utils/loginAttempts.js";
 
 const router = Router();
 
@@ -27,8 +27,8 @@ router.post("/login", loginLimiter, async (req, res) => {
     return res.status(401).send({ success: false, error: "Wrong password" });
   }
 
-  loginLimiter.resetKey(ip)
-  
+  loginLimiter.resetKey(ip);
+
   req.session.user = {
     id: user.id,
     email: user.email,
@@ -42,7 +42,7 @@ router.post("/logout", (req, res) => {
   res.send({ succes: true });
 });
 
-router.post("/signup", async (req, res) => {
+router.post("/users/signup", async (req, res) => {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
@@ -74,7 +74,7 @@ router.post("/signup", async (req, res) => {
   res.status(200).send({ success: true });
 });
 
-router.post("/forgot-password", async (req, res) => {
+router.post("/users/forgot-password", async (req, res) => {
   const { email } = req.body;
   if (!email)
     return res.status(400).send({ success: false, error: "Email is required" });
@@ -97,7 +97,7 @@ router.post("/forgot-password", async (req, res) => {
   );
 
   const frontURL = process.env.FRONTEND_URL || "http://localhost:5173";
-  const resetLink = `${frontURL}/reset-password?token=${token}`;
+  const resetLink = `${frontURL}/users/reset-password?token=${token}`;
 
   const resultEmail = await sendNewPassword(email, resetLink);
 
@@ -110,7 +110,7 @@ router.post("/forgot-password", async (req, res) => {
   res.send({ success: true });
 });
 
-router.post("/reset-password", async (req, res) => {
+router.patch("/users/reset-password", async (req, res) => {
   const { token, newPassword } = req.body;
 
   if (!token || !newPassword) {

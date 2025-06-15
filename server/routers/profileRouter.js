@@ -3,7 +3,7 @@ import pool from "../utils/db/db.js";
 
 const router = Router();
 
-router.get("/profile", async (req, res) => {
+router.get("/users/me", async (req, res) => {
   try {
     const { id } = req.session.user;
 
@@ -22,15 +22,11 @@ router.get("/profile", async (req, res) => {
   }
 });
 
-router.delete("/profile", async (req, res) => {
+router.delete("/users/me", async (req, res) => {
   try {
     const { id } = req.session.user;
 
-    await pool.query(
-      `
-        DELETE FROM users WHERE id = $1`,
-      [id]
-    );
+    await pool.query(`DELETE FROM users WHERE id = $1`, [id]);
 
     req.session.destroy(() => {
       res.send({ success: true });

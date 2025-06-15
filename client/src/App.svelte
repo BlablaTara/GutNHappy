@@ -24,11 +24,10 @@
       authStore.set({
         isLoggedIn: !!resultDB.isLoggedIn,
         user: resultDB.user ?? null,
-        loading: false
+        loading: false,
       });
     } catch {
       authStore.set({ isLoggedIn: false, user: null, loading: false });
-
     }
   });
 </script>
@@ -53,8 +52,8 @@
       <PrivateRoute component={Profile} />
     </Route>
 
-    <Route path="/forgot-password"><ForgotPassword /></Route>
-    <Route path="/reset-password"><ResetPassword /></Route>
+    <Route path="/users/forgot-password"><ForgotPassword /></Route>
+    <Route path="/users/reset-password"><ResetPassword /></Route>
   </div>
 </Router>
 

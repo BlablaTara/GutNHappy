@@ -1,8 +1,6 @@
 import { Router } from "express";
 import pool from "../utils/db/db.js";
 
-import { getWeek } from "../utils/weeks.js";
-
 const router = Router();
 
 router.get("/fruits", async (req, res) => {
@@ -15,11 +13,10 @@ router.get("/vegetables", async (req, res) => {
   res.send({ data: resultVeggies.rows });
 });
 
-router.post("/save-selections", async (req, res) => {
-  const { fruitIds, veggieIds, date } = req.body;
+router.put("/user-selections/:weekId", async (req, res) => {
+  const { fruitIds, veggieIds } = req.body;
   const userId = req.session.user?.id;
-  const weekId = date || getWeek(new Date());
-
+  const weekId = req.params.weekId;
 
   const client = await pool.connect();
 
