@@ -14,7 +14,6 @@ const server = http.createServer(app);
 
 app.use(express.json());
 app.use(express.static(path.resolve("../client/dist/")));
-app.use("/images", express.static(path.resolve("../client/public/images")));
 
 const sessionMiddleware = session({
   secret: process.env.SESSION_KEY,
