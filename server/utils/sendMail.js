@@ -2,6 +2,7 @@ import "dotenv/config";
 
 import nodemailer from "nodemailer";
 
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -16,15 +17,15 @@ export async function sendNewPassword(to, resetLink) {
     to,
     subject: "Password Reset",
     text: `Click the following link to reset your password: ${resetLink}`,
-    html: `<p>Click the following link to reset your password (Valid for 1 hour):</p>
-    <p><a href="${resetLink}">${resetLink}</a></p>
-    <p>If you did not request this, just ignore this email.</p>`,
+    html: `<p>Click the following link to reset your password:</p><p><a href="${resetLink}">${resetLink}</a></p>`,
   };
-
+ 
   try {
-    await transporter.sendMail(mailOptions);
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent: " + info.response);
     return { success: true };
-  } catch {
-    return { success: false, error: "Could not send reset email. Try again later."};
+  } catch (error) {
+    console.log("Error sending email: ", error);
+    return { success: false, error: error.message };
   }
 }

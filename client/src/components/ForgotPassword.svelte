@@ -1,27 +1,30 @@
 <script>
-  import toastr from "toastr";
+    import { fetchPost } from "../utils/fetch.js";
+    import toastr from 'toastr';
 
-  import { fetchPost } from "../utils/fetch.js";
+    let email = '';
+    let error = '';
 
-  let email = "";
+    async function sendReset() {
+        const res = await fetchPost('/api/forgot-password', { email });
 
-  async function sendReset() {
-    const resetResult = await fetchPost("/api/users/forgot-password", {
-      email,
-    });
+        if (res.error) {
+            toastr.error(res.error);
+        } else {
+            toastr.success('Reset link sent to your email');
+            toastr.info("Check spam")
+            setTimeout(() => {
+                window.location.href = "/login?reset=1";
+            }, 2000);
+            
 
-    if (resetResult.error) {
-      toastr.error(resetResult.error);
-    } else {
-      toastr.success("Reset link sent to your email");
-      toastr.info("Check spam");
-      setTimeout(() => {
-        window.location.href = "/login?reset=1";
-      }, 2000);
+        }
     }
-  }
+
 </script>
 
 <h2>Forgot Password</h2>
 <input type="email" placeholder="Type your email ..." bind:value={email} />
 <button on:click={sendReset}>Send Reset Link</button>
+
+<p style="color: red;">{error}</p>

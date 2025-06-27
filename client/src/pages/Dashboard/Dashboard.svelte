@@ -1,236 +1,138 @@
 <script>
-  import { onMount, onDestroy, tick } from "svelte";
-  import { Link } from "svelte-routing";
-  import toastr from "toastr";
-  import Chart from "chart.js/auto";
-  import annotationPlugin from "chartjs-plugin-annotation";
+    import { onMount, onDestroy, tick } from "svelte";
+    import { authStore } from "../../stores/authStore.js";
+    import { fetchGet } from "../../utils/fetch.js";
+    import UserProcess from "../../components/UserProcess.svelte";
 
-  import { authStore } from "../../stores/authStore.js";
-  import { fetchGet } from "../../utils/fetch.js";
+    import Chart from 'chart.js/auto'
 
-  import UserProcess from "../../components/UserProcess.svelte";
-  import FoodBox from "../../components/FoodBox.svelte";
-  import ShowFoodModal from "../../components/ShowFoodModal.svelte";
+    let username = '';
+    $: username = $authStore.user ? $authStore.user.username : "";
 
-  Chart.register(annotationPlugin);
+    let summary = [];
+    let totalFruits = 0;
+    let totalVeggies = 0;
 
-  let username = "";
-  $: username = $authStore.user ? $authStore.user.username : "";
+    let canvas;
+    let chart;
 
-  let summary = [];
-  let totalFruits = 0;
-  let totalVeggies = 0;
-  let selectedFood = null;
-
-  let canvas;
-  let chart;
-
-  let chartData = {
-    labels: [],
-    datasets: [
-      {
-        label: "Fruits",
-        data: [],
-        backgroundColor: "#f6c02a",
-      },
-      {
-        label: "Veggies",
-        data: [],
-        backgroundColor: "#b7d255",
-      },
-    ],
-  };
-
-  let maxYValue = Math.max(
-    20,
-    ...chartData.datasets[0].data,
-    ...chartData.datasets[1].data
-  );
-
-  let chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: "top" },
-      annotation: {
-        annotations: {
-          goalLine: {
-            type: "line",
-            yMin: 10,
-            yMax: 10,
-            borderColor: "rgba(0, 0, 0, 0.5)",
-            borderWidth: 2,
-            borderDash: [6, 6],
-            label: {
-              enabled: true,
-              content: "Goal halfway (10)",
-              position: "end",
-              backgroundColor: "rgbs(0, 0, 0, 0.7)",
-              color: "#fff",
-              font: {
-                style: "italic",
-              },
+    let chartData = {
+        labels: [],
+        datasets: [
+            {
+                label: 'Fruits',
+                data: [],
+                backgroundColor: '#ffa726'
             },
-          },
-        },
-      },
-    },
-    scales: {
-      x: { stacked: true },
-      y: { stacked: true, beginAtZero: true, max: maxYValue },
-    },
-  };
+            {
+                label: 'Veggies',
+                data: [],
+                backgroundColor: '#66bb6a'
+            }
+        ]
+    };
 
-  let hasData = false;
+    let chartOptions = {
+        responsive: true,
+        plugins: { legend: { position: "top" } },
+        scales: {
+            x: { stacked: true },
+            y: { stacked: true, beginAtZero: true }
+        }
+    };
 
-  let selectedFruits = [];
-  let selectedVeggies = [];
+    let hasData = false;
 
-  async function updateData() {
-    try {
-      const uwsResult = await fetchGet("/api/protected/user-weekly-selections");
-      const weeklyArray = uwsResult.data;
+    async function updateData() {
+        try {
+            const result = await fetchGet('/api/protected/user-weekly-selections');
 
-      if (!uwsResult.success || !uwsResult.data) {
-        toastr.error("Could not load weekly selections.");
-        return;
-      }
+            if (result.error) {
+                return console.error("Error getting weekly data:", result.error);
+            }
 
-      hasData = true;
-      summary = weeklyArray;
+            const weeklyArray = result.data;
 
-      chartData.labels = weeklyArray.map((entry) => entry.label || entry.week);
-      chartData.datasets[0].data = weeklyArray.map((entry) => entry.fruits);
-      chartData.datasets[1].data = weeklyArray.map((entry) => entry.veggies);
+            if (!weeklyArray || weeklyArray.length === 0) {
+                hasData = false;
+                return;
+            }
 
-      const latestWeek = weeklyArray[weeklyArray.length - 1] || {
-        fruits: 0,
-        veggies: 0,
-      };
+            hasData = true;
+            summary = weeklyArray;
 
-      totalFruits = latestWeek.fruits;
-      totalVeggies = latestWeek.veggies;
+            chartData.labels = weeklyArray.map(entry => entry.label || entry.week);
+            chartData.datasets[0].data = weeklyArray.map(entry => entry.fruits);
+            chartData.datasets[1].data = weeklyArray.map(entry => entry.veggies);
 
-      const selectionsResponse = await fetchGet(
-        "/api/protected/user-selections"
-      );
+            //Array sorteret fra ældste til nyeste uge
+            const latestWeek = weeklyArray[weeklyArray.length - 1] || { fruits: 0, veggies: 0 };
 
-      if (selectionsResponse?.data) {
-        selectedFruits = selectionsResponse.data.fruits || [];
-        selectedVeggies = selectionsResponse.data.vegetables || [];
-      }
+            totalFruits = latestWeek.fruits;
+            totalVeggies = latestWeek.veggies;
 
-      if (chart) {
-        chart.data = chartData;
-        chart.update();
-      }
-    } catch {
-      toastr.error(
-        "Something went wrong while loading your dashboard data. Please try again later."
-      );
-    }
-  }
+            console.log("Weekly data", weeklyArray); //LoG
 
-  onMount(async () => {
-    await tick();
-    await updateData();
+            if (chart) {
+                chart.data = chartData;
+                chart.update();
+            }
 
-    if (hasData && canvas) {
-      chart = new Chart(canvas, {
-        type: "bar",
-        data: chartData,
-        options: chartOptions,
-      });
-    }
-  });
+        } catch (error) {
+            console.error("Unexpected error fetching weekly data:", error);
+        }
+       
+    };
 
-  onDestroy(() => {
-    if (chart) {
-      chart.destroy();
-    }
-  });
+    onMount(async () => {
+        await tick(); 
+
+        await updateData();
+
+        if (hasData && canvas) {
+            chart = new Chart(canvas, {
+                type: 'bar',
+                data: chartData,
+                options: chartOptions
+            });
+        }
+    });
+
+    onDestroy(() => {
+        if (chart) {
+            chart.destroy();
+        }
+    });
+
 </script>
 
-<div class="container">
-  <h1>🌟Welcome {username}🌟</h1>
+<div>
+    <h1>Dashboard</h1>
+    <p>Welcome {username}</p>
 
-  {#if selectedFruits.length === 0 && selectedVeggies.length === 0}
-    <div class="start">
-      <p>You haven't selected any fruits or vegetables yet</p>
-      <p>
-        🌱Start your healthy journey <Link class="start-link" to="/add-health"
-          >here!</Link
-        >🌱
-      </p>
-    </div>
-  {/if}
+    <h2>Your weekly healt status</h2>
+    <UserProcess username={username} {totalFruits} {totalVeggies} />
+    <!-- <p>{total} out of your weekly goal of 20 different (fruits: {totalFruits}, veggies: {totalVeggies})</p> -->
 
-  <h2>Your weekly healt status:</h2>
-  <UserProcess {username} {totalFruits} {totalVeggies} />
+    <h2>Your intake the last 10 weeks</h2>
+    {#if hasData}
+        <div class="chart-container">
+            <canvas bind:this={canvas}></canvas>
+        </div>
+    {:else}
+    <p>You haven't selected any fruits or vegetables yet. Start your healthy journey today!</p>
+    {/if}
 
-  <h2>Your intake the last 10 weeks</h2>
-  {#if hasData}
-    <div class="chart-container">
-      <canvas bind:this={canvas}></canvas>
-    </div>
-  {:else}
-    <p>You haven't selected any fruits or vegetables yet</p>
-  {/if}
-
-  {#if selectedFruits.length || selectedVeggies.length}
-    <h2>This weeks intake:</h2>
-    <div class="selected-grid">
-      {#each selectedFruits as fruit}
-        <FoodBox
-          food={fruit}
-          selected={true}
-          showCheckmark={false}
-          highlightSelected={false}
-          onToggle={() => {}}
-          onInfoClick={(food) => (selectedFood = food)}
-        />
-      {/each}
-      {#each selectedVeggies as veggie}
-        <FoodBox
-          food={veggie}
-          selected={true}
-          showCheckmark={false}
-          highlightSelected={false}
-          onToggle={() => {}}
-          onInfoClick={(food) => (selectedFood = food)}
-        />
-      {/each}
-    </div>
-  {:else}
-    <p>You haven't added any fruits or vegetables for this week yet.</p>
-  {/if}
-
-  {#if selectedFood}
-    <ShowFoodModal food={selectedFood} onClose={() => (selectedFood = null)} />
-  {/if}
 </div>
 
 <style>
-  canvas {
-    width: 100% !important;
-    height: 300px !important;
-  }
-  .start {
-    text-align: center;
-    font-size: 1.5rem;
-  }
-  .start-link {
-    font-weight: bold;
-    text-decoration-line: underline;
-  }
-  .chart-container {
-    width: 100%;
-    height: 300px;
-  }
-  .selected-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
+    .chart-container {
+        width: 100%;
+        height: 300px;
+    }
+
+    canvas {
+        width: 100% !important;
+        height: 300px !important;
+    }
 </style>

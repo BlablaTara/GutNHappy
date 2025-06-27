@@ -2,101 +2,69 @@
   export let food;
   export let selected = false;
   export let onToggle;
-  export let onInfoClick = (food) => {};
-  export let showCheckmark = true;
-  export let highlightSelected = true;
+
+  function toggle() {
+    onToggle(food);
+  }
 </script>
 
-<div
-  class="box {selected
-    ? highlightSelected
-      ? 'selected'
-      : 'no-highlight'
-    : ''}"
-  on:click={() => onToggle(food)}
-  role="button"
-  tabindex="0"
-  on:keydown={(e) => (e.key === "Enter" || e.key === " ") && onToggle(food)}
+<button
+  class="box {selected ? 'selected' : ''}"
+  on:click={toggle}
+  type="button"
 >
-  <button
-    type="button"
-    class="info-icon"
-    on:click|stopPropagation={() => onInfoClick(food)}
-    aria-label="Show info about this food">?</button
-  >
-
   <div class="image-wrapper">
     <img src={food.image_url} alt={food.name} />
-    {#if selected && showCheckmark}
+    {#if selected}
       <div class="checkmark">✔</div>
     {/if}
   </div>
   <p>{food.name}</p>
-</div>
+</button>
 
 <style>
+  button.box {
+    all: unset;
+    border: 2px solid gray;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    width: 120px;
+
+    position: relative;
+    background-color: rgb(254, 251, 238);
+  }
+
+  .selected {
+    border-color: green;
+    background-color: #eaffea;
+  }
+
+  .image-wrapper {
+    position: relative;
+  }
+
   img {
     width: 100px;
     height: 100px;
     object-fit: cover;
     border-radius: 0.5rem;
   }
-  p {
-    margin: 0;
-    font-size: 0.95rem;
-    font-weight: 500;
-  }
-  .box {
-    width: 120px;
-    border-radius: 1rem;
-    padding: 1rem;
-    text-align: center;
-    cursor: pointer;
-    transition:
-      border-color 0.2s,
-      box-shadow 0.2s,
-      transform 0.2s;
-    position: relative;
-    background-color: rgb(255, 255, 255);
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.12);
-  }
-  .box:hover {
-    transform: scale(1.05);
-  }
-  .box.selected {
-    border-color: #4caf50;
-    box-shadow: 0px 0px 8px rgba(76, 175, 80, 0.2);
-    background-color: #eaffea;
-  }
-  .box.no-highlight.selected {
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.12);
-    background-color: rgb(255, 255, 255);
-  }
-  .image-wrapper {
-    position: relative;
-  }
   .checkmark {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #4caf50;
-    font-size: 9rem;
+    top: 5px;
+    right: 5px;
+    background-color: green;
+    color: white;
     font-weight: bold;
-  }
-  .info-icon {
-    all: unset;
-    cursor: pointer;
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    color: #8d8d8d;
-    padding: 0.1rem 0.4rem;
-    border: 2px solid #8d8d8d;
     border-radius: 50%;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    z-index: 20;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
   }
 </style>

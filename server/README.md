@@ -6,11 +6,11 @@
 
 Setup db:
 $ cd server
-$ node utils/db/setupDB.js
+$ node utils/setupDB.js
 
 Data in db: 
 $ cd server
-$ node utils/db/seedFruitsNVeggies.js
+$ node utils/seedDB.js
 
 ## to run the applikation local:
 

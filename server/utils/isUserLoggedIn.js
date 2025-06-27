@@ -1,8 +1,6 @@
 function isUserLoggedIn(req, res, next) {
   if (!req.session.user) {
-    return res
-      .status(403)
-      .send({ success: false, error: "You must be logged in" });
+    return res.status(403).send({ errorMessage: "You must be logged in" });
   }
   next();
 }
