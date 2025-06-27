@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "fix": "rm -rf node_modules package-lock.json && npm install",
     "build": "vite build",
     "build-watch": "vite build --watch",
     "preview": "vite preview"
@@ -19,6 +20,7 @@
   },
   "dependencies": {
     "chart.js": "^4.4.9",
+    "chartjs-plugin-annotation": "^3.1.0",
     "dotenv": "^16.5.0",
     "recharts": "^2.15.3",
     "socket.io-client": "^4.8.1",

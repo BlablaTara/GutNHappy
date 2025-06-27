@@ -22,3 +22,4 @@ export function getLastNumberOfWeeks (num = 10) {
     return weeks;
 }
 
+
